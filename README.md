@@ -1,5 +1,5 @@
 # LeetCode Solutions
 
-Here are some codes for leetcode problems. (https://leetcode.com/problemset/all/)
+Here are my solution in Python for [leetcode problems](https://leetcode.com/problemset/all/).
 
-Recording my path to be proficient in Python coding.
+LeetCode problems are good online practice platform to consolidate algorithms and data structures.
