@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Reverse_Integer_1",
+            "request": "launch",
+            "mainClass": "Reverse_Integer_1",
+            "projectName": "7.Reverse_Integer_d4842444"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Reverse_Integer_2",
+            "request": "launch",
+            "mainClass": "Reverse_Integer_2",
+            "projectName": "7.Reverse_Integer_d4842444"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Reverse_Integer",
+            "request": "launch",
+            "mainClass": "Reverse_Integer",
+            "projectName": "7.Reverse_Integer_d4842444"
+        }
+    ]
+}
