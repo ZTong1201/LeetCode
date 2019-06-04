@@ -8,7 +8,7 @@ import java.util.*;
  * return true if and only if the given words are sorted lexicographicaly in this alien language.
  */
 
-public class Alien_Dictionary {
+public class Verifying_an_Alien_Dictionary {
 
     public static boolean isAlienSorted(String[] words, String order) {
         int alienOrder = 0;
