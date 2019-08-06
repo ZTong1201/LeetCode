@@ -94,8 +94,10 @@ public class networkDelayTime {
      * Approach 2: Dijkstra's Algorithm
      * Dijkstra算法可以计算从source node到所有target node的最短距离，无需进行dfs重复遍历。可以利用minheap每次从heap中取出下次需要访问的最小距离，dijkstra
      * 算法结束后，会更新source节点到所有节点的最短距离。若有节点无法访问，则返回-1，若图是完全连通的，则返回所有最短距离的最大值。
-     *
-     *
+     * 
+     * Time: O(V + ElogE) 每个节点需被遍历一遍来更新到该节点的最短距离，同时将元素从heap中取出需要O(logn) time, heap最怀情况下会将所有边都放入其中，upper bound
+     *       为O(ElogE)
+     * Space: O(V + E) 需要将所有的边存在图中，同时需要一个dist map来记录到每个节点的最短距离。minheap最坏情况需要O(E)的空间存放所有的边
      */
     public int networkDelayTimeDijkstra(int[][] times, int N, int K) {
         Map<Integer, List<int[]>> graph = new HashMap<>();
