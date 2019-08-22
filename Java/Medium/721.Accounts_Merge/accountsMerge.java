@@ -23,7 +23,7 @@ public class accountsMerge {
      *
      * Approach 1: Depth-First Search
      * 关键点为如何构建图。可以利用HashMap将每个用户的第一个email和其他email相连（双向)， 同时再建一个HashMap链接每个email和相应用户名。
-     * 图建好后，利用DFS将所有connected component放在一个list里sort一下，最后在list首端加入用户名。为避免充实，DFS过程中，再建一个hashset用来记录
+     * 图建好后，利用DFS将所有connected component放在一个list里sort一下，最后在list首端加入用户名。为避免重复遍历，DFS过程中，再建一个hashset用来记录
      * 访问过的节点。
      *
      * Time: O(n + sum(ai * log(ai))) n是所用元素的总个数，构建图需要遍历所有节点，时间O(n), ai是account[i]的长度，再找到所有connected component后
@@ -125,7 +125,7 @@ public class accountsMerge {
     /**
      * Approach 2: Union Find
      * 找到所有的connected component， union find时间最快。给每一个新的email赋予一个integer id， 建立一个email和id的map就可以快速找到每个email属于
-     * union find中哪一个节点。同时还需要一个email到name的map来寻找对应关系。只要两个email隶属于同一个人，就讲两个节点连接起来。最后只需要查union find中
+     * union find中哪一个节点。同时还需要一个email到name的map来寻找对应关系。只要两个email隶属于同一个人，就将两个节点连接起来。最后只需要查union find中
      * distinct的id值，将隶属于该id的所有components放到一个list，排序，在首端加上name即可。
      * 因为accounts的长度不超过1000，accounts[i]的长度不超过10， 所以我们有至多10000个distinct emails，union find只需要常数空间
      *
