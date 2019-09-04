@@ -76,7 +76,7 @@ public class validSudoku {
     //判断该位置所在小格是否符合数独规则
     private boolean isCellValid(char[][] board, int i, int j) {
         int cellRow = i / 3;
-        int cellCol = i / 3;
+        int cellCol = j / 3;
         int[] map = new int[9];
         for(int row = cellRow * 3; row < cellCol * 3 + 3; row++) {
             for(int col = cellCol * 3; col < cellCol * 3 + 3; col++) {
