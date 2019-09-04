@@ -18,7 +18,7 @@ public class decodeWays {
      * dp[i] is the number of decoding ways of substring from 0 to i - 1. Initialize dp[0] = 1, and dp[1] equals 1 if the first element of
      * string is not '0'. For a given index in the string, we need to look back two indices, that's the reason why we initialize dp[0] as 1,
      * because that is for index 1 in the string. If current char is not '0', there are at least dp[i - 1] ways to decode so far. If
-     * the previous element along with current element can sum to a value >= 10 or <= 27. (If we have something like 09 or 27, which means
+     * the previous element along with current element can sum to a value >= 10 or <= 26. (If we have something like 09 or 27, which means
      * combining these two chars is invalid), there are also dp[i - 2] ways to decode here. For example, if we have xxxxxxx123, if we want
      * to know how many ways to decode at 3. First we know, there are at least the number of ways to decode 2 that we can decode 3. (simply
      * replace 3 by 'C'). Besides, we can treat 12 as a number and decode it as 'l'. Hence there are number of ways to decode prior to 12.
