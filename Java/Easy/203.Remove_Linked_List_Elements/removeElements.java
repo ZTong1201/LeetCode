@@ -150,7 +150,7 @@ public class removeElements {
     }
 
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

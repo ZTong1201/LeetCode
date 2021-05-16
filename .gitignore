@@ -1,1 +1,15 @@
+# DS store
 .DS_Store
+#IDEA files
+.idea/
+
+#iml files
+*.iml
+
+# jupyter checkpoints
+.ipynb_checkpoints/
+
+# algorithm folder
+algorithms/
+
+out/

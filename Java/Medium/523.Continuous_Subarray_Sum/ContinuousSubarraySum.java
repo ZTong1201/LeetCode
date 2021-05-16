@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.*;
 
-public class subarraySum {
+public class ContinuousSubarraySum {
 
     /**
      * Given a list of non-negative numbers and a target integer k, write a function to check if the array has a continuous subarray of

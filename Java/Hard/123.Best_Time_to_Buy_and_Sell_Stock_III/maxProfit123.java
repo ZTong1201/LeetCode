@@ -1,7 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class maxProfit {
+public class maxProfit123 {
 
     /**
      * Say you have an array for which the ith element is the price of a given stock on day i.

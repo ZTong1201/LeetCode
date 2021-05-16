@@ -1,7 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class removeDuplicates {
+public class removeDuplicatesList {
 
 
     /**
@@ -62,7 +62,7 @@ public class removeDuplicates {
         return res;
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

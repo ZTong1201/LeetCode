@@ -18,7 +18,7 @@ public class numArray {
      * Time: O(N + M)，初始化需要O(N)时间，每次call query需要O(1)时间，call M次需要O(M)时间
      * Space: O(N) 需要一个数组记录prefix sum
      */
-    private int[] preSum;
+    private final int[] preSum;
 
     public numArray(int[] nums) {
         this.preSum = new int[nums.length + 1];

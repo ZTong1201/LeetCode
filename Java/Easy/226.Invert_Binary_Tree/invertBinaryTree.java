@@ -133,7 +133,7 @@ public class invertBinaryTree {
         preorder(root.right, list);
     }
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;

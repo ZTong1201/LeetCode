@@ -14,8 +14,8 @@ public class myQueue2 {
      * 为n（n次push进stack1） + 2n + 1（第一次pop，需要从stack1 pop n次，同时往stack2 push n次，再从stack2 pop一次） + n - 1（后续n - 1次从stack2
      * pop的操作）= 4n，总的时间为O(4n/2n) = O(2) = O(1)，因此为amortized O(1)时间
      */
-    private Stack<Integer> stack1;
-    private Stack<Integer> stack2;
+    private final Stack<Integer> stack1;
+    private final Stack<Integer> stack2;
 
     /** Initialize your data structure here. */
     public myQueue2() {

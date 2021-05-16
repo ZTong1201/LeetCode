@@ -158,7 +158,7 @@ public class pathSum {
         assertTrue(hasPathSum2Iterative(tree1, 22));
     }
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;

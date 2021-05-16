@@ -7,7 +7,7 @@ public class myStack2 {
      * Approach 2: One Queue - (push - O(n), pop - O(1), top - O(1))
      * 也可以将上述pop时的过程放在push中，这样保证queue中元素其实和入queue的顺序相反，因此每次的queue的头部元素都是栈顶元素，使得pop和top都为O(1)
      */
-    private Queue<Integer> queue;
+    private final Queue<Integer> queue;
 
     /** Initialize your data structure here. */
     public myStack2() {
