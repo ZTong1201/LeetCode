@@ -23,7 +23,7 @@ public class myStack1 {
      * push的时候把元素一个一个放入队列即可，同时用一个global variable记录最新加入的元素，可以使top为O(1)时间，但在pop时，因为queue是先进先出（FIFO），
      * 所以需要将前面的n - 1个元素先移动到queue的末端，然后将现在queue的第一个元素移除即可
      */
-    private Queue<Integer> queue;
+    private final Queue<Integer> queue;
     private int top;
 
     /** Initialize your data structure here. */

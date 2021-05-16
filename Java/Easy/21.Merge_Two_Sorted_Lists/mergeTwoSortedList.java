@@ -124,7 +124,7 @@ public class mergeTwoSortedList {
         return res;
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

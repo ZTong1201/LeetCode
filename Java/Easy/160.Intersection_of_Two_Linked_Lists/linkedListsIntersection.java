@@ -250,7 +250,7 @@ public class linkedListsIntersection {
         assertEquals(expectedB3, listB3);
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

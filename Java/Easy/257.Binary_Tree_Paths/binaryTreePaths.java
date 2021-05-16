@@ -190,7 +190,7 @@ public class binaryTreePaths {
     }
 
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;

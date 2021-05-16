@@ -49,7 +49,7 @@ public class minStack {
         return this.node.next.min;
     }
 
-    private class ListNodeWithMin {
+    private static class ListNodeWithMin {
         int val;
         int min;
         ListNodeWithMin next;

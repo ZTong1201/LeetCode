@@ -90,7 +90,7 @@ public class reverseLinkedList {
         }
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

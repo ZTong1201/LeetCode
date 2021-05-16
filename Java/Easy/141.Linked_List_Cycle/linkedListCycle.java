@@ -114,7 +114,7 @@ public class linkedListCycle {
         assertFalse(hasCycleTwoPointers(test3));
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 

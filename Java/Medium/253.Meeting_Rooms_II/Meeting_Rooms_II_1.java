@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 /**
  * Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei)
@@ -6,6 +7,7 @@ import java.util.*;
  * Use two Priority Queues.
  */
 public class Meeting_Rooms_II_1 {
+
     public static int minMeetingRooms(int[][] intervals) {
         int roomCount = 0;
         Comparator<int[]> startCompare = (int[] meet1, int[] meet2) -> {
