@@ -1,19 +1,20 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class editDistance {
 
     /**
      * Given two words word1 and word2, find the minimum number of operations required to convert word1 to word2.
-     *
+     * <p>
      * You have the following 3 operations permitted on a word:
-     *
+     * <p>
      * Insert a character
      * Delete a character
      * Replace a character
      */
     public int minDistance(String word1, String word2) {
-
+        return 0;
     }
 
 

@@ -1,22 +1,22 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class evaluateRPN {
 
     /**
      * Evaluate the value of an arithmetic expression in Reverse Polish Notation.
-     *
+     * <p>
      * Valid operators are +, -, *, /. Each operand may be an integer or another expression.
-     *
+     * <p>
      * Note:
-     *
+     * <p>
      * Division between two integers should truncate toward zero.
      * The given RPN expression is always valid. That means the expression would always evaluate to a result and there won't be any
      * divide by zero operation.
      */
     public int evalRPN(String[] tokens) {
-
+        return 0;
     }
 
     @Test

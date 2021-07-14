@@ -1,27 +1,28 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class minimumCost {
 
     /**
      * There are N workers.  The i-th worker has a quality[i] and a minimum wage expectation wage[i].
-     *
+     * <p>
      * Now we want to hire exactly K workers to form a paid group.  When hiring a group of K workers, we must pay them according to the
      * following rules:
-     *
+     * <p>
      * Every worker in the paid group should be paid in the ratio of their quality compared to other workers in the paid group.
      * Every worker in the paid group must be paid at least their minimum wage expectation.
      * Return the least amount of money needed to form a paid group satisfying the above conditions.
-     *
+     * <p>
      * Note:
-     *
+     * <p>
      * 1 <= K <= N <= 10000, where N = quality.length = wage.length
      * 1 <= quality[i] <= 10000
      * 1 <= wage[i] <= 10000
      * Answers within 10^-5 of the correct answer will be considered correct.
      */
     public double mincostToHireWorkers(int[] quality, int[] wage, int K) {
-
+        return 0;
     }
 
     @Test

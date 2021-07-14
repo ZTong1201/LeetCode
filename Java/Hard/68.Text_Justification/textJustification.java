@@ -1,28 +1,32 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class textJustification {
 
     /**
      * Given an array of words and a width maxWidth, format the text such that each line has exactly maxWidth characters and is fully
      * (left and right) justified.
-     *
+     * <p>
      * You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when
      * necessary so that each line has exactly maxWidth characters.
-     *
+     * <p>
      * Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly
      * between words, the empty slots on the left will be assigned more spaces than the slots on the right.
-     *
+     * <p>
      * For the last line of text, it should be left justified and no extra space is inserted between words.
-     *
+     * <p>
      * Note:
      * A word is defined as a character sequence consisting of non-space characters only.
      * Each word's length is guaranteed to be greater than 0 and not exceed maxWidth.
      * The input array words contains at least one word.
      */
     public List<String> fullJustify(String[] words, int maxWidth) {
-
+        return null;
     }
 
     @Test
@@ -43,7 +47,7 @@ public class textJustification {
         List<String> actual1 = fullJustify(words1, 16);
         List<String> expected1 = new ArrayList<>(Arrays.asList("This    is    an", "example  of text", "justification.  "));
         assertEquals(expected1.size(), actual1.size());
-        for(int i = 0; i < expected1.size(); i++) {
+        for (int i = 0; i < expected1.size(); i++) {
             assertEquals(expected1.get(i), actual1.get(i));
         }
         /**
@@ -65,7 +69,7 @@ public class textJustification {
         List<String> actual2 = fullJustify(words2, 16);
         List<String> expected2 = new ArrayList<>(Arrays.asList("What   must   be", "acknowledgment  ", "shall be        "));
         assertEquals(expected2.size(), actual2.size());
-        for(int i = 0; i < expected2.size(); i++) {
+        for (int i = 0; i < expected2.size(); i++) {
             assertEquals(expected2.get(i), actual2.get(i));
         }
         /**
@@ -90,7 +94,7 @@ public class textJustification {
         List<String> expected3 = new ArrayList<>(Arrays.asList("Science  is  what we", "understand      well", "enough to explain to",
                 "a  computer.  Art is", "everything  else  we", "do                  "));
         assertEquals(expected3.size(), actual3.size());
-        for(int i = 0; i < expected3.size(); i++) {
+        for (int i = 0; i < expected3.size(); i++) {
             assertEquals(expected3.get(i), actual3.get(i));
         }
     }
