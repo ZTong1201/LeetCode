@@ -1,18 +1,18 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class findMedian {
 
     /**
      * There are two sorted arrays nums1 and nums2 of size m and n respectively.
-     *
+     * <p>
      * Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
-     *
+     * <p>
      * You may assume nums1 and nums2 cannot be both empty.
      */
     public double findMedianSortedArray(int[] nums1, int[] nums2) {
-
+        return 1.0;
     }
 
     @Test
