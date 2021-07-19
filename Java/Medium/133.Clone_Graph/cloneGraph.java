@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Stack;
 
 public class cloneGraph {
     /**
@@ -95,6 +96,31 @@ public class cloneGraph {
         }
         //最后拷贝完成，返回新copy好的起始节点即可
         return graph.get(node);
+    }
+
+    /**
+     * Approach 3: DFS with stack
+     */
+    public Node cloneGraphDfsStack(Node node) {
+        if (node == null) return null;
+
+        Map<Node, Node> visited = new HashMap<>();
+        visited.put(node, new Node(node.val, new ArrayList<>()));
+        Stack<Node> stack = new Stack<>();
+        stack.push(node);
+
+        while (!stack.isEmpty()) {
+            Node curr = stack.pop();
+
+            for (Node neighbor : curr.neighbors) {
+                if (!visited.containsKey(neighbor)) {
+                    visited.put(neighbor, new Node(neighbor.val, new ArrayList<>()));
+                    stack.push(neighbor);
+                }
+                visited.get(curr).neighbors.add(visited.get(neighbor));
+            }
+        }
+        return visited.get(node);
     }
 
     /**
