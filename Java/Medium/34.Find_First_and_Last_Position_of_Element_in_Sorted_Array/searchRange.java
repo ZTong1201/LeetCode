@@ -1,36 +1,46 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class searchRange {
 
     /**
-     * Given an array of integers nums sorted in ascending order, find the starting and ending position of a given target value.
-     *
+     * Given an array of integers nums sorted in ascending order, find the starting and ending position of a given
+     * target value.
+     * <p>
      * Your algorithm's runtime complexity must be in the order of O(log n).
-     *
+     * <p>
      * If the target is not found in the array, return [-1, -1].
-     *
+     * <p>
+     * Constraints:
+     * <p>
+     * 0 <= nums.length <= 10^5
+     * -10^9 <= nums[i] <= 10^9
+     * nums is a non-decreasing array.
+     * -10^9 <= target <= 10^9
+     * <p>
      * Approach 1: Linear Scan
-     * First pass starts from the front of the array find the first position, second pass starts from the end of the array, find the last.
-     *
+     * First pass starts from the front of the array find the first position, second pass starts from the end of the
+     * array, find the last.
+     * <p>
      * Time: O(n)
      * Space: O(1)
      */
     public int[] searchRangeLinearScan(int[] nums, int target) {
         int[] res = new int[]{-1, -1};
-        for(int i = 0; i < nums.length; i++) {
-            if(nums[i] == target) {
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) {
                 res[0] = i;
                 break;
             }
         }
 
         //if res[0] == -1, we didn't find the target value
-        if(res[0] == -1) return res;
+        if (res[0] == -1) return res;
 
         //otherwise, we search for the last position
-        for(int j = nums.length - 1; j >= 0; j--) {
-            if(nums[j] == target) {
+        for (int j = nums.length - 1; j >= 0; j--) {
+            if (nums[j] == target) {
                 res[1] = j;
                 break;
             }
@@ -63,42 +73,60 @@ public class searchRange {
 
     /**
      * Approach 2: Binary Search
-     * We can do two binary search to find the first and last position.
-     * When finding the first position, if the midpoint equals to the target, we still need to search the left subarray. Similarly, when
-     * finding the last position, if the midpoint equals to the target, we need to check the right subarray.
-     * The terminating condition is when left and right pointers meet each other.
+     * Basically the algorithm involves two binary search scan to find the leftmost & rightmost bound of target. If
+     * target doesn't exist in the nums array at all, return -1. When searching for the leftmost bound, if
+     * nums[mid] == target, there are two possibilities: 1. mid is already the leftmost bound when mid hits the
+     * left boundary of current search range or it doesn't hit the left boundary but nums[mid - 1] != target,
+     * 2. mid is still not the leftmost bound and since we're seeking the left bound, narrow the search range to
+     * the left half.
+     * <p>
+     * When searching for the rightmost bound, the logic is essentially the same - 1. mid is the right bound if mid
+     * hits the right boundary or nums[mid + 1] != target 2. keep searching the right half
+     * <p>
+     * Time: O(logn)
+     * Space: O(1)
      */
     public int[] searchRangeBinarySearch(int[] nums, int target) {
-        int left = 0, right = nums.length - 1; //assign two pointers to search target
-        boolean found = false; //a boolean variable to check whether we actually found one target number
+        // find the leftmost bound
+        int firstOccurrence = findBound(nums, target, true);
+        // if target doesn't exist in the nums array, -1 will be returned
+        if (firstOccurrence == -1) return new int[]{-1, -1};
 
-        //first binary search to find first position
-        while(left <= right) {
-            int mid = left + (right - left) / 2;
+        // find the rightmost bound
+        int lastOccurrence = findBound(nums, target, false);
+        return new int[]{firstOccurrence, lastOccurrence};
+    }
 
-            //if the value at the midpoint larger than or equal to the target, search the left subarray
-            if(nums[mid] >= target) {
-                if(nums[mid] == target) found = true; //check whether we found the target
-                right = mid - 1;
-            } else {
-                //otherwise, check the right subarray
+    private int findBound(int[] nums, int target, boolean isFirst) {
+        // 左闭右开区间
+        int left = 0, right = nums.length;
+        while (left < right) {
+            int mid = (right - left) / 2 + left;
+            if (nums[mid] == target) {
+                if (isFirst) {
+                    // 判断mid是否已经是left bound
+                    if (mid == left || nums[mid - 1] != target) {
+                        return mid;
+                    }
+                    // 向左继续寻找first occurrence
+                    right = mid;
+                } else {
+                    // 判断mid是否已经是right bound
+                    // 因为是左闭右开区间，最右index为right - 1
+                    if (mid == right - 1 || nums[mid + 1] != target) {
+                        return mid;
+                    }
+                    // 向右继续寻找last occurrence
+                    left = mid + 1;
+                }
+            } else if (nums[mid] < target) { // normal binary search
                 left = mid + 1;
-            }
-        }
-
-        //assign two new pointers, whereas the starting point is now the first position of target (or just 0)
-        int newLeft = left;
-        right = nums.length - 1;
-        while(newLeft <= right) {
-            int mid = newLeft + (right - newLeft) / 2;
-            //this time, if the value of midpoint is smaller than or equal to target, search the right subarray
-            if(nums[mid] <= target) {
-                newLeft = mid + 1;
             } else {
-                right = mid - 1;
+                right = mid;
             }
         }
-        return found ? new int[]{left, right} : new int[]{-1, -1};
+        // target不在nums array中，返回-1
+        return -1;
     }
 
     @Test
