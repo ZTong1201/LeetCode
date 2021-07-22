@@ -22,7 +22,29 @@ public class climbStairs {
     }
 
     /**
-     * Approach 2: Dynamic Programming
+     * Approach 2: Recursion with memorization
+     * <p>
+     * Time: O(n)
+     * Space: O(n) need extra space to store visited nodes
+     */
+    public int climbStairsMemorization(int n) {
+        int[] memo = new int[n + 1];
+        return climb(memo, n);
+    }
+
+    private int climb(int[] memo, int n) {
+        if (n <= 1) return 1;
+        // if memo[n] is not 0, which means it's been visited
+        // return the memorized value
+        if (memo[n] != 0) return memo[n];
+        // update memo array
+        memo[n] = climb(memo, n - 1) + climb(memo, n - 2);
+        // return the last value in the array
+        return memo[n];
+    }
+
+    /**
+     * Approach 3: Dynamic Programming
      * <p>
      * <p>
      * Time: O(n)
@@ -39,7 +61,7 @@ public class climbStairs {
     }
 
     /**
-     * Approach 3: Dynamic Programming without extra space
+     * Approach 4: Dynamic Programming without extra space
      * <p>
      * Time: O(n)
      * Space: O(1)
@@ -68,5 +90,8 @@ public class climbStairs {
         assertEquals(2, climbStairsDPTwoValues(2));
         assertEquals(3, climbStairsDPTwoValues(3));
         assertEquals(8, climbStairsDPTwoValues(5));
+        assertEquals(2, climbStairsMemorization(2));
+        assertEquals(3, climbStairsMemorization(3));
+        assertEquals(8, climbStairsMemorization(5));
     }
 }
