@@ -30,8 +30,8 @@ public class RangeSumImmutable {
             }
         }
 
-        public int sumRange(int i, int j) {
-            return preSum[j + 1] - preSum[i];
+        public int sumRange(int left, int right) {
+            return preSum[right + 1] - preSum[left];
         }
 
     }
