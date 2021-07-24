@@ -1,14 +1,19 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class preorder {
+
     /**
      * Given a binary tree, return the preorder traversal of its nodes' values.
      * Follow up: Recursive solution is trivial, could you do it iteratively?
-     *
+     * <p>
      * Approach 1: Stack
-     *
+     * <p>
      * Time: O(N) we need to visit all nodes once
      * Space: O(H), we need a stack to store nodes which may require up to the height of tree space, in the worst case, it will be O(N)
      */
@@ -16,9 +21,9 @@ public class preorder {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             TreeNode curr = stack.pop();
-            if(curr != null) {
+            if (curr != null) {
                 res.add(curr.val);
                 stack.push(curr.right);
                 stack.push(curr.left);
@@ -30,28 +35,28 @@ public class preorder {
     /**
      * Approach 2: Morris Traversal
      * Keep searching the predecessor for each node, and visit each predecessor twice to decide whether to go left or go right.
-     *
+     * <p>
      * Time: O(N), only the predecessor will be visited twice, other nodes will only be visited once
      * Space: O(1) if the output list doesn't account for space complexity, we only assign current node and the predecessor node during
-     *       iteration
+     * iteration
      */
     public List<Integer> morrisTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         TreeNode node = root;
-        while(node != null) {
-            if(node.left == null) {
+        while (node != null) {
+            if (node.left == null) {
                 res.add(node.val);
                 node = node.right;
             } else {
                 TreeNode predecessor = node.left;
-                while(predecessor.right != null && predecessor.right != node) {
+                while (predecessor.right != null && predecessor.right != node) {
                     predecessor = predecessor.right;
                 }
 
                 //if the predecessor.right is null, it is the first time we visit the predecessor
                 //add current node value to the list, assign the current node to predecessor.right
                 //and visit the left child
-                if(predecessor.right == null) {
+                if (predecessor.right == null) {
                     res.add(node.val);
                     predecessor.right = node;
                     node = node.left;
@@ -113,13 +118,13 @@ public class preorder {
 
     private int[] listToArray(List<Integer> aList, int length) {
         int[] res = new int[length];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             res[i] = aList.get(i);
         }
         return res;
     }
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;

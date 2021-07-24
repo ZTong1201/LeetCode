@@ -1,14 +1,18 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class inorder {
     /**
      * Given a binary tree, return the inorder traversal of its nodes' values.
      * Follow up: Recursive solution is trivial, could you do it iteratively?
-     *
+     * <p>
      * Approach 1: Stack
-     *
+     * <p>
      * Time: O(N) we need to visit all nodes once
      * Space: O(H), we need a stack to store nodes which may require up to the height of tree space, in the worst case, it will be O(N)
      */
@@ -16,8 +20,8 @@ public class inorder {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         TreeNode curr = root;
-        while(curr != null || !stack.isEmpty()) {
-            while(curr != null) {
+        while (curr != null || !stack.isEmpty()) {
+            while (curr != null) {
                 stack.push(curr);
                 curr = curr.left;
             }
@@ -33,28 +37,28 @@ public class inorder {
      * Keep searching the predecessor for each node, and visit each predecessor twice to decide whether to go left or go right.
      * Add current node value to the result list when we visit the node the second time, which means we have traverse all the left subtree
      * for that given node
-     *
+     * <p>
      * Time: O(N), only the predecessor will be visited twice, other nodes will only be visited once
      * Space: O(1) if the output list doesn't account for space complexity, we only assign current node and the predecessor node during
-     *       iteration
+     * iteration
      */
     public List<Integer> morrisTraversal(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         TreeNode node = root;
-        while(node != null) {
+        while (node != null) {
             //if node.left is null, which means we have visit all the left subtree for that node
-            if(node.left == null) {
+            if (node.left == null) {
                 //simply add current node value to the final list, and move to the right
                 res.add(node.val);
                 node = node.right;
             } else {
                 //otherwise, find the predecessor of the current node
                 TreeNode predecessor = node.left;
-                while(predecessor.right != null && predecessor.right != node) {
+                while (predecessor.right != null && predecessor.right != node) {
                     predecessor = predecessor.right;
                 }
 
-                if(predecessor.right == null) { //visit the predecessor the first time
+                if (predecessor.right == null) { //visit the predecessor the first time
                     //simply assign current node to its right child
                     predecessor.right = node;
                     //then keep traverse the left subtree
@@ -119,13 +123,13 @@ public class inorder {
 
     private int[] listToArray(List<Integer> aList, int length) {
         int[] res = new int[length];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             res[i] = aList.get(i);
         }
         return res;
     }
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
