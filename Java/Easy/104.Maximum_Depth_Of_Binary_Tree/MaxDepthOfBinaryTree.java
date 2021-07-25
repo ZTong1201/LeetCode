@@ -1,49 +1,48 @@
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.util.*;
+import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import static org.junit.Assert.assertEquals;
 
 public class MaxDepthOfBinaryTree {
     /**
      * Given a binary tree, find its maximum depth.
-     *
+     * <p>
      * The maximum depth is the number of nodes along the longest path
      * from the root node down to the farthest leaf node.
-     *
+     * <p>
      * Note: A leaf is a node with no children.
-     *
+     * <p>
      * Solve it in a recursive way.
      * Time: O(n)
      * Space: worst case: O(n), average case: O(logN)
      */
     public int maxDepthRecursive(TreeNode root) {
-        if(root == null) return 0;
+        if (root == null) return 0;
         return Math.max(maxDepthRecursive(root.left), maxDepthRecursive(root.right)) + 1;
     }
 
 
     /**
-     * Use iteration to compute max depth
-     *
+     * Use iteration to compute max depth (BFS)
+     * <p>
      * Time: O(n)
      * Space: O(n)
      */
     public int maxDepthIterative(TreeNode root) {
-        if(root == null) return 0;
-        Stack<TreeNode> nodes = new Stack<>();
-        Stack<Integer> depths = new Stack<>();
-        nodes.push(root);
-        depths.push(1);
-        int depth = 0, curr_depth = 0;
-        while(!nodes.isEmpty()) {
-            TreeNode currNode = nodes.pop();
-            curr_depth = depths.pop();
-            if(currNode != null) {
-                depth = Math.max(depth, curr_depth);
-                nodes.push(currNode.left);
-                nodes.push(currNode.right);
-                depths.push(curr_depth + 1);
-                depths.push(curr_depth + 1);
+        int depth = 0;
+        if (root == null) return depth;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode curr = queue.poll();
+                if (curr.left != null) queue.add(curr.left);
+                if (curr.right != null) queue.add(curr.right);
             }
+            depth++;
         }
         return depth;
     }
