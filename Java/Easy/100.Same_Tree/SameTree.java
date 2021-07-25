@@ -1,22 +1,25 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.Stack;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SameTree {
 
     /**
      * Given two binary trees, write a function to check if they are the same or not.
-     *
+     * <p>
      * Two binary trees are considered the same if they are structurally identical and the nodes have the same value.
-     *
+     * <p>
      * Use Recursion!
      * Time: O(N)
      * Space: worst case: O(N) for completely unbalanced tree, average case: O(logN)
      */
     public boolean isSameTreeRecursive(TreeNode p, TreeNode q) {
-        if(p == null && q == null) return true;
-        if(p == null || q == null) return false;
-        if(p.val != q.val) return false;
+        if (p == null && q == null) return true;
+        if (p == null || q == null) return false;
+        if (p.val != q.val) return false;
         return isSameTreeRecursive(p.left, q.left) && isSameTreeRecursive(p.right, q.right);
     }
 
@@ -31,18 +34,17 @@ public class SameTree {
         pNodes.push(p);
         qNodes.push(q);
 
-        while(!pNodes.isEmpty() || !qNodes.isEmpty()) {
+        while (!pNodes.isEmpty() || !qNodes.isEmpty()) {
             TreeNode currP = pNodes.pop();
             TreeNode currQ = qNodes.pop();
-            if(currP == null && currQ == null) continue;
-            if(currP == null || currQ == null) return false;
-            if(currP.val != currQ.val) return false;
+            if (currP == null && currQ == null) continue;
+            if (currP == null || currQ == null) return false;
+            if (currP.val != currQ.val) return false;
             pNodes.push(currP.left);
             pNodes.push(currP.right);
             qNodes.push(currQ.left);
             qNodes.push(currQ.right);
         }
-        if(!pNodes.isEmpty() || !qNodes.isEmpty()) return false;
         return true;
     }
 
@@ -92,7 +94,6 @@ public class SameTree {
         testq3.right = new TreeNode(2);
         assertFalse(isSameTreeIterative(testp3, testq3));
     }
-
 
 
     private static class TreeNode {
