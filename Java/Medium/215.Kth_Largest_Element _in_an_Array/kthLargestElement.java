@@ -1,15 +1,17 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+
+import static org.junit.Assert.assertEquals;
 
 public class kthLargestElement {
     /**
      * Find the kth largest element in an unsorted array.
      * Note that it is the kth largest element in the sorted order, not the kth distinct element.
-     *
+     * <p>
      * Method 1: Sort the array and retrieve the (n - k)-th element in the array
-     *
+     * <p>
      * Time: O(NlogN) for sorting
      * Space: O(1) no extra space needed
      */
@@ -20,15 +22,15 @@ public class kthLargestElement {
 
     /**
      * Method 2: create a minHeap with size k, when the size of minHeap is larger than k, remove the smallest element
-     *
+     * <p>
      * Time: O(Nlogk) since minHeap is of size k, and insertion/deletion in a minHeap cost O(logk)
      * Space: O(k) or we could say O(1) cause it costs constant space to store elements
      */
     public int findKthLargestMinHeap(int[] nums, int k) {
         PriorityQueue<Integer> minHeap = new PriorityQueue<>();
-        for(int i : nums) {
+        for (int i : nums) {
             minHeap.add(i);
-            if(minHeap.size() > k) minHeap.poll();
+            if (minHeap.size() > k) minHeap.poll();
         }
         return minHeap.poll();
     }
@@ -38,9 +40,9 @@ public class kthLargestElement {
      * Find a pivot value, and add values which are smaller than the pivot value to its left, and values which are greater or equal to
      * the pivot value to its right. When the correct index of the pivot value equals to n - k, then we are done. Otherwise, we search
      * the correct side to find the (n - k)-th element. (i.e. if pivot_index < n - k, search the right side, otherwise search the left side)
-     *
+     * <p>
      * Time: O(N^2) in the worst case, if array is sorted or array contains all same values.
-     *       On average, we can randomly pick the pivot value to partition the array evenly, then the runtime would be O(N)
+     * On average, we can randomly pick the pivot value to partition the array evenly, then the runtime would be O(N)
      * Space: O(1) no extra space needed, since we swap elements in-place
      */
 
@@ -50,37 +52,39 @@ public class kthLargestElement {
         nums[end] = temp;
     }
 
-    private int partition(int[] nums, int left, int right, int pivot_index) {
-        int pivot_value = nums[pivot_index];
-        int correct_index = left; //this would be the correct index for the pivot value after partitioning
+    private int partition(int[] nums, int start, int end) {
+        // always select the mid value to bring some randomization
+        int mid = (end - start) / 2 + start;
+        int pivot_value = nums[mid];
+        // this would be the correct index for the pivot value after partitioning
+        int correct_index = start;
         // swap the pivot value to the end
-        swap(nums, pivot_index, right);
+        swap(nums, mid, end);
 
-        // swap values which are smaller than the pivot value to its left
-        for(int i = left; i <= right; i++) {
-            if(nums[i] < pivot_value) {
+        for (int i = start; i <= end; i++) {
+            if (nums[i] < pivot_value) {
+                // keep swapping values which are smaller than the pivot value to its left
                 swap(nums, correct_index, i);
+                // found one smaller than, increment the correct index by 1
                 correct_index += 1;
             }
         }
         // swap the pivot value to its correct index
-        swap(nums, correct_index, right);
+        swap(nums, correct_index, end);
+        // return the pivot index since it's been correctly placed
         return correct_index;
     }
 
-    private int quickSelect(int[] nums, int left, int right, int kth_smallest) {
-        if(left == right) return nums[left]; // if array only contains one element, return it
+    private int quickSelect(int[] nums, int start, int end, int kth_smallest) {
+        if (start == end) return nums[start]; // if array only contains one element, return it
 
-        Random random = new Random();
-        int pivot_index = left + random.nextInt(right - left);
+        int pivot_index = partition(nums, start, end);
 
-        pivot_index = partition(nums, left, right, pivot_index);
-
-        if(pivot_index == kth_smallest) return nums[kth_smallest];
-        // if pivot_index < n - k, search the right side
-        else if(pivot_index < kth_smallest) return quickSelect(nums, pivot_index + 1, right, kth_smallest);
+        if (pivot_index == kth_smallest) return nums[kth_smallest];
+            // if pivot_index < n - k, search the right side
+        else if (pivot_index < kth_smallest) return quickSelect(nums, pivot_index + 1, end, kth_smallest);
         // otherwise search the left side
-        return quickSelect(nums, left, pivot_index - 1, kth_smallest);
+        return quickSelect(nums, start, pivot_index - 1, kth_smallest);
     }
 
     public int findKthLargestQuickSelect(int[] nums, int k) {
