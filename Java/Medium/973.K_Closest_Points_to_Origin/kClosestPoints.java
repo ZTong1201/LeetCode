@@ -1,20 +1,26 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class kClosestPoints {
 
     /**
      * We have a list of points on the plane.  Find the K closest points to the origin (0, 0).
      * (Here, the distance between two points on a plane is the Euclidean distance.)
-     *
+     * <p>
      * You may return the answer in any order.  The answer is guaranteed to be unique (except for the order that it is in.)
-     *
+     * <p>
      * Approach 1: Sorting
      * For each point, we can compute their distance to origin and store them in an array. We then sort them in ascending order,
      * the k-th smallest distance will locate at index K - 1. We now iterate over the original 2-D array, compute each distance and
      * if the distance is <= k-th smallest distance, which means it is one of the k closest points.
-     *
+     * <p>
      * Time: O(NlogN), the runtime is dominated by a typical sorting algorithm, which is O(NlogN)
      * Space: O(N), we need to create another array with the same length of points array to store distance of each point.
      */
@@ -22,15 +28,15 @@ public class kClosestPoints {
         int length = points.length;
         int[] dists = new int[length];
         int[][] res = new int[K][2];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             dists[i] = getDist(points[i]);
         }
         Arrays.sort(dists);
         int distK = dists[K - 1];
         int index = 0;
-        for(int i = 0; i < length; i++) {
-            if(getDist(points[i]) <= distK) {
-                res[index++] = points[i];
+        for (int[] point : points) {
+            if (getDist(point) <= distK) {
+                res[index++] = point;
             }
         }
         return res;
@@ -45,21 +51,20 @@ public class kClosestPoints {
      * We can actually use a max heap to keep track of correct points. We build a max heap and keep the size == K. We add a point
      * at each time, if at any time, the size of max heap is larger than K, we simply remove the point with largest distance so far.
      * By doing so, we will keep k points with k-th smallest distance in the max heap.
-     *
+     * <p>
      * Time: O(NlogK), remove the largest element takes O(logK) time in a max heap. We need to do N - k times removal
      * Space: O(K) since we build a max heap of size K
      */
     public int[][] kClosestMaxHeap(int[][] points, int K) {
-        PriorityQueue<int[]> maxHeap = new PriorityQueue<>((point1, point2) -> point2[0]*point2[0] + point2[1]*point2[1] -
-                point1[0]*point1[0] - point1[1]*point1[1]);
+        PriorityQueue<int[]> maxHeap = new PriorityQueue<>((int[] a, int[] b) -> b[0] * b[0] + b[1] * b[1] -
+                a[0] * a[0] - a[1] * a[1]);
         int[][] res = new int[K][2];
-        int length = points.length;
-        for(int i = 0; i < length; i++) {
-            maxHeap.add(points[i]);
-            if(maxHeap.size() > K) maxHeap.poll();
+        for (int[] point : points) {
+            maxHeap.add(point);
+            if (maxHeap.size() > K) maxHeap.poll();
         }
         int index = 0;
-        while(!maxHeap.isEmpty()) res[index++] = maxHeap.poll();
+        while (!maxHeap.isEmpty()) res[index++] = maxHeap.poll();
         return res;
     }
 
@@ -72,58 +77,54 @@ public class kClosestPoints {
      * we are done, simply return points from index 0 to index K - 1. Otherwise, we can abandon one side and repeat partitioning in
      * the proper side. (e.g. If the pivot value locates at index larger than K - 1, we need to search the left side until we end at
      * index K - 1)
-     *
+     * <p>
      * Time: O(N), on average, we abandon half of the input array when we do a partitioning. Hence we need to care about N + N/2 + N/4
-     *      + ... items = 2N. However, in the worst case, the algorithm will degenerate to O(N^2) runtime. We can solve this issue by
-     *      randomly pick a pivot value at each partitioning step
+     * + ... items = 2N. However, in the worst case, the algorithm will degenerate to O(N^2) runtime. We can solve this issue by
+     * randomly pick a pivot value at each partitioning step
      * Space: O(N) we need space to keep track of call stack before we finish the partitioning
      */
     public int[][] kCloestQuickSelect(int[][] points, int K) {
         int[][] res = new int[K][2];
-        Random random = new Random();
-        helper(points, 0, points.length - 1, K, random);
-        for(int i = 0; i < K; i++) {
+        helper(points, 0, points.length - 1, K);
+        for (int i = 0; i < K; i++) {
             res[i] = points[i];
         }
         return res;
     }
 
-    private void helper(int[][] points, int low, int high, int K, Random random) {
-        // If any time low and high cross each other, we finish the partitioning
-        if(low >= high) return;
-        // select a random index in the subarray
-        int index = low + random.nextInt(high - low);
+    private void helper(int[][] points, int start, int end, int K) {
+        // If any time start and end cross each other, we finish the partitioning
+        if (start >= end) return;
+        // select the midpoint of the subarray to get some randomization
+        int mid = (end - start) / 2 + start;
         // compute the distance of that point as our pivot value
-        int pivot = getDist(points[index]);
-        swap(points, high, index); // move the pivot point to the end of the subarray
-        // assign two pointers at the front and the end, the pivot point is not included
-        int i = low;
-        int j = high - 1;
-        while(i <= j) {
-            // if any point has a smaller distance, it is at the correct location, we increment the front pointer
-            while(i <= high - 1 && getDist(points[i]) <= pivot) i++;
-            // if any point has a larger distance, it is at the correct location, we decrement the end pointer
-            while(j >= low && getDist(points[j]) > pivot) j--;
+        int pivot = getDist(points[mid]);
+        // assign two pointers at the front and the end, the pivot point is INCLUDED!
+        int left = start, right = end;
+        while (left <= right) {
+            // if any point has a strictly smaller distance, it is at the correct location, we increment the front pointer
+            while (getDist(points[left]) < pivot) left++;
+            // if any point has a strictly larger distance, it is at the correct location, we decrement the end pointer
+            while (getDist(points[right]) > pivot) right--;
             // if front pointer finds a larger distance and the end pointer finds a smaller distance, yet they haven't
             // reach each other, then we haven't done the partitioning, we simply swap these two points and keep checking further
-            if(i < j) swap(points, i, j);
+            if (left <= right) {
+                int[] temp = points[left];
+                points[left] = points[right];
+                points[right] = temp;
+                left++;
+                right--;
+            }
         }
-        // when partitioning is done, move the pivot value to its correct index, which is where pointer i points to
-        swap(points, high, i);
-
+        // when partition is done, the pivot value will be at the correct index
+        // the right pointer points to the pivot value, whereas the left pointer points to its next index
         // if the pivot value locates at index K - 1, then we are done
-        if(i == K - 1) return;
-        // else if the pivot value locates at the right of K - 1, which means we have more than K points,
-        // redo partitioning in the left subarray
-        else if(i > K - 1) helper(points, low, i - 1, K ,random);
-        // else, redo partitioning in the right subarray
-        else helper(points, i + 1, high, K, random);
-    }
-
-    private void swap(int[][] points, int a, int b) {
-        int[] temp = points[a];
-        points[a] = points[b];
-        points[b] = temp;
+        if (right == K - 1) return; // or left == K
+            // else if the pivot value locates at the right of K - 1, which means we have more than K points,
+            // redo partitioning in the left subarray
+        else if (right > K - 1) helper(points, start, right, K);
+            // else, redo partitioning in the right subarray
+        else helper(points, left, end, K);
     }
 
 
@@ -144,7 +145,7 @@ public class kClosestPoints {
         expected1.add(points1[1]);
         int[][] actual1 = kCloestQuickSelect(points1, 1);
         assertEquals(actual1.length, expected1.size());
-        for(int i = 0; i < actual1.length; i++) {
+        for (int i = 0; i < actual1.length; i++) {
             assertTrue(expected1.contains(actual1[i]));
         }
         /**
@@ -158,7 +159,7 @@ public class kClosestPoints {
         expected2.add(points2[0]);
         int[][] actual2 = kCloestQuickSelect(points2, 2);
         assertEquals(actual2.length, expected2.size());
-        for(int i = 0; i < actual2.length; i++) {
+        for (int i = 0; i < actual2.length; i++) {
             assertTrue(expected2.contains(actual2[i]));
         }
         /**
@@ -172,7 +173,7 @@ public class kClosestPoints {
         expected3.add(points3[1]);
         int[][] actual3 = kCloestQuickSelect(points3, 2);
         assertEquals(actual3.length, expected3.size());
-        for(int i = 0; i < actual3.length; i++) {
+        for (int i = 0; i < actual3.length; i++) {
             assertTrue(expected3.contains(actual3[i]));
         }
     }
@@ -194,7 +195,7 @@ public class kClosestPoints {
         expected1.add(points1[1]);
         int[][] actual1 = kClosestMaxHeap(points1, 1);
         assertEquals(actual1.length, expected1.size());
-        for(int i = 0; i < actual1.length; i++) {
+        for (int i = 0; i < actual1.length; i++) {
             assertTrue(expected1.contains(actual1[i]));
         }
         /**
@@ -208,7 +209,7 @@ public class kClosestPoints {
         expected2.add(points2[0]);
         int[][] actual2 = kClosestMaxHeap(points2, 2);
         assertEquals(actual2.length, expected2.size());
-        for(int i = 0; i < actual2.length; i++) {
+        for (int i = 0; i < actual2.length; i++) {
             assertTrue(expected2.contains(actual2[i]));
         }
         /**
@@ -222,7 +223,7 @@ public class kClosestPoints {
         expected3.add(points3[1]);
         int[][] actual3 = kClosestMaxHeap(points3, 2);
         assertEquals(actual3.length, expected3.size());
-        for(int i = 0; i < actual3.length; i++) {
+        for (int i = 0; i < actual3.length; i++) {
             assertTrue(expected3.contains(actual3[i]));
         }
     }
@@ -245,7 +246,7 @@ public class kClosestPoints {
         expected1.add(points1[1]);
         int[][] actual1 = kClosestSorting(points1, 1);
         assertEquals(actual1.length, expected1.size());
-        for(int i = 0; i < actual1.length; i++) {
+        for (int i = 0; i < actual1.length; i++) {
             assertTrue(expected1.contains(actual1[i]));
         }
         /**
@@ -259,7 +260,7 @@ public class kClosestPoints {
         expected2.add(points2[0]);
         int[][] actual2 = kClosestSorting(points2, 2);
         assertEquals(actual2.length, expected2.size());
-        for(int i = 0; i < actual2.length; i++) {
+        for (int i = 0; i < actual2.length; i++) {
             assertTrue(expected2.contains(actual2[i]));
         }
         /**
@@ -273,7 +274,7 @@ public class kClosestPoints {
         expected3.add(points3[1]);
         int[][] actual3 = kClosestSorting(points3, 2);
         assertEquals(actual3.length, expected3.size());
-        for(int i = 0; i < actual3.length; i++) {
+        for (int i = 0; i < actual3.length; i++) {
             assertTrue(expected3.contains(actual3[i]));
         }
     }
