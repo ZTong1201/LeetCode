@@ -21,37 +21,41 @@ public class SortArray {
     }
 
     private void quickSort(int[] nums, int start, int end) {
-        // base case
         if (start >= end) return;
+        // partition the array and find pivot index for subsequent partitions
+        int pivot = partition(nums, start, end);
+        quickSort(nums, start, pivot - 1);
+        quickSort(nums, pivot + 1, end);
+    }
 
-        // find an arbitrary pivot value in the array
-        int pivot = nums[(end - start) / 2 + start];
+    private int partition(int[] nums, int start, int end) {
+        // always pick the midpoint value to bring randomization
+        int mid = (end - start) / 2 + start;
+        int pivot = nums[mid];
+        // it is the correct index where pivot value should place after partition
+        int correct_index = start;
+        // swap the pivot value to the end
+        swap(nums, mid, end);
 
-        // partition
-        int left = start, right = end;
-        while (left <= right) {
-            // skip elements that are already smaller than the pivot from the left
-            while (nums[left] < pivot) left++;
-            // also skip elements that are already larger than the pivot from the right
-            while (nums[right] > pivot) right--;
-
-            // if left and right haven't crossed, which means the pivot place is still not in its correct place
-            if (left <= right) {
-                // swap the smaller values to the left (or the larger value to the right)
-                int temp = nums[left];
-                nums[left] = nums[right];
-                nums[right] = temp;
-                // keep arranging elements
-                left++;
-                right--;
+        for (int i = start; i < end; i++) {
+            if (nums[i] < pivot) {
+                // keep swapping smaller values to the left of where pivot value should have been
+                swap(nums, i, correct_index);
+                // found smaller value, increment correct index by 1
+                correct_index++;
             }
         }
-        // once partition is done, the pivot value should have been at the right place
-        // divide and conquer to partition the left and the right sub-array
-        // now everything ahead of "right" index is smaller than the pivot value
-        quickSort(nums, start, right);
-        // and everything after "left" index is larger than the pivot value
-        quickSort(nums, left, end);
+
+        // partition is done, swap the pivot value from the end to the correct place
+        swap(nums, correct_index, end);
+        // return the pivot index
+        return correct_index;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 
     /**
