@@ -96,22 +96,16 @@ public class sortList {
      * 最后一步即是merge两个已经排好序的链表即可
      * <p>
      * Time: O(nlogn)
-     * Space: O(1)
+     * Space: O(logn) call stack is of size logn
      */
 
     public ListNode sortListMergeSort(ListNode head) {
         //此函数的目的是递归地找到链表的中点，然后断掉前后两段，直到链表中仅剩一个元素
         if (head == null || head.next == null) return head;
-        ListNode slow = head, fast = head;
-        // fast can never be null - the edge case has been captured above
-        // and when fast == null, the while loop would have broken
-        while (fast.next != null) {
+        ListNode slow = head, fast = head.next;
+        // 找到链表中点
+        while (fast != null && fast.next != null) {
             fast = fast.next.next;
-            //为了正确找到中点，当fast为null时（即链表长度为偶数），直接跳出循环
-            //因为此时希望在slow.next处断掉链表
-            if (fast == null) {
-                break;
-            }
             slow = slow.next;
         }
         //断掉链表
