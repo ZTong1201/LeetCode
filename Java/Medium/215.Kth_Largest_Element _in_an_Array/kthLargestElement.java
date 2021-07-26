@@ -61,7 +61,7 @@ public class kthLargestElement {
         // swap the pivot value to the end
         swap(nums, mid, end);
 
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i < end; i++) {
             if (nums[i] < pivot_value) {
                 // keep swapping values which are smaller than the pivot value to its left
                 swap(nums, correct_index, i);
