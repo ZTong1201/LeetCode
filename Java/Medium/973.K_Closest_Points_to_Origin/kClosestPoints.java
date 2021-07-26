@@ -11,28 +11,28 @@ import static org.junit.Assert.assertTrue;
 public class kClosestPoints {
 
     /**
-     * We have a list of points on the plane.  Find the K closest points to the origin (0, 0).
+     * We have a list of points on the plane.  Find the k closest points to the origin (0, 0).
      * (Here, the distance between two points on a plane is the Euclidean distance.)
      * <p>
      * You may return the answer in any order.  The answer is guaranteed to be unique (except for the order that it is in.)
      * <p>
      * Approach 1: Sorting
      * For each point, we can compute their distance to origin and store them in an array. We then sort them in ascending order,
-     * the k-th smallest distance will locate at index K - 1. We now iterate over the original 2-D array, compute each distance and
+     * the k-th smallest distance will locate at index k - 1. We now iterate over the original 2-D array, compute each distance and
      * if the distance is <= k-th smallest distance, which means it is one of the k closest points.
      * <p>
      * Time: O(NlogN), the runtime is dominated by a typical sorting algorithm, which is O(NlogN)
      * Space: O(N), we need to create another array with the same length of points array to store distance of each point.
      */
-    public int[][] kClosestSorting(int[][] points, int K) {
+    public int[][] kClosestSorting(int[][] points, int k) {
         int length = points.length;
         int[] dists = new int[length];
-        int[][] res = new int[K][2];
+        int[][] res = new int[k][2];
         for (int i = 0; i < length; i++) {
             dists[i] = getDist(points[i]);
         }
         Arrays.sort(dists);
-        int distK = dists[K - 1];
+        int distK = dists[k - 1];
         int index = 0;
         for (int[] point : points) {
             if (getDist(point) <= distK) {
@@ -48,20 +48,20 @@ public class kClosestPoints {
 
     /**
      * Approach 2: Max Heap
-     * We can actually use a max heap to keep track of correct points. We build a max heap and keep the size == K. We add a point
-     * at each time, if at any time, the size of max heap is larger than K, we simply remove the point with largest distance so far.
+     * We can actually use a max heap to keep track of correct points. We build a max heap and keep the size == k. We add a point
+     * at each time, if at any time, the size of max heap is larger than k, we simply remove the point with largest distance so far.
      * By doing so, we will keep k points with k-th smallest distance in the max heap.
      * <p>
      * Time: O(NlogK), remove the largest element takes O(logK) time in a max heap. We need to do N - k times removal
-     * Space: O(K) since we build a max heap of size K
+     * Space: O(k) since we build a max heap of size k
      */
-    public int[][] kClosestMaxHeap(int[][] points, int K) {
+    public int[][] kClosestMaxHeap(int[][] points, int k) {
         PriorityQueue<int[]> maxHeap = new PriorityQueue<>((int[] a, int[] b) -> b[0] * b[0] + b[1] * b[1] -
                 a[0] * a[0] - a[1] * a[1]);
-        int[][] res = new int[K][2];
+        int[][] res = new int[k][2];
         for (int[] point : points) {
             maxHeap.add(point);
-            if (maxHeap.size() > K) maxHeap.poll();
+            if (maxHeap.size() > k) maxHeap.poll();
         }
         int index = 0;
         while (!maxHeap.isEmpty()) res[index++] = maxHeap.poll();
@@ -73,58 +73,65 @@ public class kClosestPoints {
      * Since the order doesn't matter in the final result, we can actually use a divide and conquer approach to solve this problem.
      * Just like select k-th largest element in an array (or (n - k)-th smallest), we can first pick a pivot value to partition the
      * whole array into two sub-arrays. where left subarray contains all points with smaller distance than the pivot point, and the
-     * right subarray contains all points with larger distance. If the pivot distance locates at index K - 1 after partitioning, then
-     * we are done, simply return points from index 0 to index K - 1. Otherwise, we can abandon one side and repeat partitioning in
-     * the proper side. (e.g. If the pivot value locates at index larger than K - 1, we need to search the left side until we end at
-     * index K - 1)
+     * right subarray contains all points with larger distance. If the pivot distance locates at index k - 1 after partitioning, then
+     * we are done, simply return points from index 0 to index k - 1. Otherwise, we can abandon one side and repeat partitioning in
+     * the proper side. (e.g. If the pivot value locates at index larger than k - 1, we need to search the left side until we end at
+     * index k - 1)
      * <p>
      * Time: O(N), on average, we abandon half of the input array when we do a partitioning. Hence we need to care about N + N/2 + N/4
      * + ... items = 2N. However, in the worst case, the algorithm will degenerate to O(N^2) runtime. We can solve this issue by
      * randomly pick a pivot value at each partitioning step
      * Space: O(N) we need space to keep track of call stack before we finish the partitioning
      */
-    public int[][] kCloestQuickSelect(int[][] points, int K) {
-        int[][] res = new int[K][2];
-        helper(points, 0, points.length - 1, K);
-        for (int i = 0; i < K; i++) {
+    public int[][] kCloestQuickSelect(int[][] points, int k) {
+        int[][] res = new int[k][2];
+        quickSelect(points, 0, points.length - 1, k);
+        for (int i = 0; i < k; i++) {
             res[i] = points[i];
         }
         return res;
     }
 
-    private void helper(int[][] points, int start, int end, int K) {
-        // If any time start and end cross each other, we finish the partitioning
+    private void quickSelect(int[][] points, int start, int end, int k) {
         if (start >= end) return;
-        // select the midpoint of the subarray to get some randomization
+        int pivot = partition(points, start, end);
+        // if the pivot correct equals to k, which means the first k-th smallest points
+        // are already in the right section (the order might not as well be correct)
+        // since order doesn't matter in this question - return it as is
+        if (pivot == k) return;
+            // first k-th points are not found, keep searching the right half
+        else if (pivot < k) quickSelect(points, pivot + 1, end, k);
+            // otherwise search the left half
+        else quickSelect(points, start, pivot - 1, k);
+    }
+
+    private int partition(int[][] points, int start, int end) {
+        // always pick the midpoint to bring randomization
         int mid = (end - start) / 2 + start;
-        // compute the distance of that point as our pivot value
+        // find the distance for the midpoint value as the pivot
         int pivot = getDist(points[mid]);
-        // assign two pointers at the front and the end, the pivot point is INCLUDED!
-        int left = start, right = end;
-        while (left <= right) {
-            // if any point has a strictly smaller distance, it is at the correct location, we increment the front pointer
-            while (getDist(points[left]) < pivot) left++;
-            // if any point has a strictly larger distance, it is at the correct location, we decrement the end pointer
-            while (getDist(points[right]) > pivot) right--;
-            // if front pointer finds a larger distance and the end pointer finds a smaller distance, yet they haven't
-            // reach each other, then we haven't done the partitioning, we simply swap these two points and keep checking further
-            if (left <= right) {
-                int[] temp = points[left];
-                points[left] = points[right];
-                points[right] = temp;
-                left++;
-                right--;
+        // this is the correct index of where the pivot value would've been after partiton
+        int correct_index = start;
+        // swap the pivot point to the end
+        swap(points, mid, end);
+
+        for (int i = start; i < end; i++) {
+            if (getDist(points[i]) < pivot) {
+                // keep swapping smaller distance to the left of correct pivot value index
+                swap(points, i, correct_index);
+                // increment the correct index by since a smaller distance has been found
+                correct_index++;
             }
         }
-        // when partition is done, the pivot value will be at the correct index
-        // the right pointer points to the pivot value, whereas the left pointer points to its next index
-        // if the pivot value locates at index K - 1, then we are done
-        if (right == K - 1) return; // or left == K
-            // else if the pivot value locates at the right of K - 1, which means we have more than K points,
-            // redo partitioning in the left subarray
-        else if (right > K - 1) helper(points, start, right, K);
-            // else, redo partitioning in the right subarray
-        else helper(points, left, end, K);
+        // swap the pivot value to its correct index and done with the partition
+        swap(points, correct_index, end);
+        return correct_index;
+    }
+
+    private void swap(int[][] points, int i, int j) {
+        int[] temp = points[i];
+        points[i] = points[j];
+        points[j] = temp;
     }
 
 
