@@ -29,13 +29,15 @@ public class MyLinkedList {
      * <p>
      * Time:
      * MyLinkedList: O(1)
-     * get: O(n) on average
+     * get: O(k)
      * addAtHead: O(1)
      * addAtTail: O(1)
-     * addAtIndex: O(n) on average
-     * deleteAtIndex: O(n) on average
+     * addAtIndex: O(k)
+     * deleteAtIndex: O(k)
      * <p>
-     * Space: O(n) we will have n + 1 nodes in the list
+     * Space:
+     * O(n) for the entire data structure
+     * O(1) for all operations
      */
 
     private int size;
