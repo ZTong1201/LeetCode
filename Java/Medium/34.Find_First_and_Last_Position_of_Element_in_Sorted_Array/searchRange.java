@@ -100,33 +100,30 @@ public class searchRange {
     private int findBound(int[] nums, int target, boolean isFirst) {
         // 左闭右开区间
         int left = 0, right = nums.length;
+        // index to be returned
+        int index = -1;
         while (left < right) {
             int mid = (right - left) / 2 + left;
             if (nums[mid] == target) {
                 if (isFirst) {
-                    // 判断mid是否已经是left bound
-                    if (mid == left || nums[mid - 1] != target) {
-                        return mid;
-                    }
-                    // 向左继续寻找first occurrence
+                    // 需要继续向左继续寻找first occurrence
                     right = mid;
                 } else {
-                    // 判断mid是否已经是right bound
-                    // 因为是左闭右开区间，最右index为right - 1
-                    if (mid == right - 1 || nums[mid + 1] != target) {
-                        return mid;
-                    }
-                    // 向右继续寻找last occurrence
+                    // 否则向右继续寻找last occurrence
                     left = mid + 1;
                 }
+                // 也有可能当前已经是first或last occurrence
+                // 更新index
+                index = mid;
             } else if (nums[mid] < target) { // normal binary search
                 left = mid + 1;
             } else {
                 right = mid;
             }
         }
-        // target不在nums array中，返回-1
-        return -1;
+        // 若target不在nums array中，返回-1
+        // 否则index会在二分查找中被更新
+        return index;
     }
 
     @Test
