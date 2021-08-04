@@ -1,38 +1,38 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class twoSumII {
 
     /**
      * Given an array of integers that is already sorted in ascending order,
      * find two numbers such that they add up to a specific target number.
-     *
+     * <p>
      * The function twoSum should return indices of the two numbers such that they add up to the target,
      * where index1 must be less than index2.
-     *
+     * <p>
      * Note:
      * 1. Your returned answers (both index1 and index2) are not zero-based.
      * 2. You may assume that each input would have exactly one solution and you may not use the same element twice.
-     *
+     * <p>
      * Two pointers
      * If the array is sorted, we can simply find the target sum by using two pointers. We assign two pointers at the front and at
      * the end. If the two numbers our pointers point to sum to the target, we find our target pair. If the sum is smaller, we move
      * the front pointer one step to the right. Similarly, if the sum is larger than target, we move the end pointer on step to the left.
      * The only thing we need to care about is overflow. Instead of summing two numbers in the array, we can compare numbers[i] with
      * target - numbers[j] to avoid overflow.
-     *
+     * <p>
      * Time: O(N), using two pointers, we actually traverse the array by one pass
      * Space: O(1), only assign two pointers, no extra space required
      */
     public int[] twoSum(int[] numbers, int target) {
-        int i = 0;
-        int j = numbers.length - 1;
-        while(i < j) {
-            if(numbers[i] == target - numbers[j]) break;
-            else if(numbers[i] > target - numbers[j]) j -=1;
-            else i += 1;
+        int left = 0, right = numbers.length - 1;
+        while (left < right) {
+            if (numbers[left] == target - numbers[right]) break;
+            else if (numbers[left] > target - numbers[right]) right--;
+            else left++;
         }
-        return new int[]{i + 1, j + 1};
+        return new int[]{left + 1, right + 1};
     }
 
     @Test
