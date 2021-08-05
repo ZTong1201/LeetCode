@@ -1,34 +1,53 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class UniquePathsII {
 
     /**
      * A robot is located at the top-left corner of a m x n grid.
-     *
+     * <p>
      * The robot can only move either down or right at any point in time.
      * The robot is trying to reach the bottom-right corner of the grid.
-     *
+     * <p>
      * Now consider if some obstacles are added to the grids. How many unique paths would there be?
-     *
+     * <p>
      * An obstacle and empty space is marked as 1 and 0 respectively in the grid.
-     *
+     * <p>
      * Note: m and n will be at most 100.
-     *
+     * <p>
+     * Constraints:
+     * <p>
+     * m == obstacleGrid.length
+     * n == obstacleGrid[i].length
+     * 1 <= m, n <= 100
+     * obstacleGrid[i][j] is 0 or 1.
+     * <p>
      * 2-D dynamic programming
-     *
+     * <p>
      * Time: O(m*n)
      * Space: O(1) since we change the grid in-place, no need for extra space
      */
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         int m = obstacleGrid.length;
         int n = obstacleGrid[0].length;
-        for(int i = 0; i < m; i++) {
-            for(int j = 0; j < n; j++) {
-                if(i == 0 && j == 0) obstacleGrid[i][j] = obstacleGrid[i][j] == 1 ? 0 : 1;
-                else if(i < 1) obstacleGrid[i][j] = obstacleGrid[i][j] == 1 ? 0 : obstacleGrid[i][j - 1];
-                else if(j < 1) obstacleGrid[i][j] = obstacleGrid[i][j] == 1 ? 0 : obstacleGrid[i - 1][j];
-                else obstacleGrid[i][j] = obstacleGrid[i][j] == 1 ? 0 : obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+        // check whether the starting point is accessible
+        obstacleGrid[0][0] = obstacleGrid[0][0] == 1 ? 0 : 1;
+        // fill in the first row, if the cell is an obstacle, fill with 0
+        for (int i = 1; i < n; i++) {
+            if (obstacleGrid[0][i] == 1) obstacleGrid[0][i] = 0;
+            else obstacleGrid[0][i] = obstacleGrid[0][i - 1];
+        }
+        // fill the first column
+        for (int i = 1; i < m; i++) {
+            if (obstacleGrid[i][0] == 1) obstacleGrid[i][0] = 0;
+            else obstacleGrid[i][0] = obstacleGrid[i - 1][0];
+        }
+        // fill other cells
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (obstacleGrid[i][j] == 1) obstacleGrid[i][j] = 0;
+                else obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
             }
         }
         return obstacleGrid[m - 1][n - 1];
