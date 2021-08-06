@@ -17,7 +17,7 @@ public class balancedBinaryTree {
      * The number of nodes in the tree is in the range [0, 5000].
      * -10^4 <= Node.val <= 10^4
      * <p>
-     * Approach 1: Top down recrusion
+     * Approach 1: Top down recursion
      * Time: O(nlogn) at each node p, it requires visiting all its left and right subtree, if the tree is actually height
      * balanced, the height will be O(logn). If in the worst case, the tree degrades to a linked list, we only need to traverse
      * the entire tree at the root node - which takes O(n) time
