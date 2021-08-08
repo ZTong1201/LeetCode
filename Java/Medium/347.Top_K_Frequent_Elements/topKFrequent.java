@@ -1,8 +1,10 @@
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -123,6 +125,44 @@ public class topKFrequent {
         nums[j] = temp;
     }
 
+    /**
+     * Approach 3: Bucket Sort
+     * Basically, the frequency of each element can only vary from nums.length to 1. Therefore, we can create a bucket for
+     * each possible frequency and add values into that bucket if it has that specific frequency. Then we start from the
+     * highest possible frequency to the lowest and append values into the final array until k frequent items have been found.
+     * <p>
+     * <p>
+     * Time: O(n) it's guaranteed to be O(n) since each time we only traverse the input array once
+     * Space: O(n)
+     */
+    public int[] topKFrequentBucketSort(int[] nums, int k) {
+        // since the highest possible frequency is nums.length
+        // we need a length of nums.length + 1 array to reach that index
+        List<Integer>[] bucket = new List[nums.length + 1];
+        Map<Integer, Integer> count = new HashMap<>();
+        for (int num : nums) {
+            count.put(num, count.getOrDefault(num, 0) + 1);
+        }
+
+        // put each element into corresponding frequency bucket
+        for (int num : count.keySet()) {
+            if (bucket[count.get(num)] == null) bucket[count.get(num)] = new ArrayList<>();
+            bucket[count.get(num)].add(num);
+        }
+
+        int[] res = new int[k];
+        // starting from the highest frequency to the lowest,
+        // and add element into the res array until it has k elements
+        for (int i = bucket.length - 1, j = 0; i >= 0 && j < k; i--) {
+            if (bucket[i] != null) {
+                for (int num : bucket[i]) {
+                    res[j++] = num;
+                }
+            }
+        }
+        return res;
+    }
+
     @Test
     public void topKFrequentTest() {
         /**
@@ -133,14 +173,18 @@ public class topKFrequent {
         int[] nums1 = new int[]{1, 1, 1, 2, 2, 3};
         int[] actualHeap1 = topKFrequentHeap(nums1, 2);
         int[] actualQuickSelect1 = topKFrequentQuickSelect(nums1, 2);
+        int[] actualBucketSort1 = topKFrequentQuickSelect(nums1, 2);
         int[] expected1 = new int[]{1, 2};
         Arrays.sort(actualHeap1);
         Arrays.sort(actualQuickSelect1);
+        Arrays.sort(actualBucketSort1);
         assertEquals(expected1.length, actualHeap1.length);
         assertEquals(expected1.length, actualQuickSelect1.length);
+        assertEquals(expected1.length, actualBucketSort1.length);
         for (int i = 0; i < expected1.length; i++) {
             assertEquals(expected1[i], actualHeap1[i]);
             assertEquals(expected1[i], actualQuickSelect1[i]);
+            assertEquals(expected1[i], actualBucketSort1[i]);
         }
         /**
          * Example 2:
@@ -150,12 +194,15 @@ public class topKFrequent {
         int[] nums2 = new int[]{1};
         int[] actualHeap2 = topKFrequentHeap(nums2, 1);
         int[] actualQuickSelect2 = topKFrequentQuickSelect(nums2, 1);
+        int[] actualBucketSort2 = topKFrequentQuickSelect(nums2, 1);
         int[] expected2 = new int[]{1};
         assertEquals(expected2.length, actualHeap2.length);
         assertEquals(expected2.length, actualQuickSelect2.length);
+        assertEquals(expected2.length, actualBucketSort2.length);
         for (int i = 0; i < expected2.length; i++) {
             assertEquals(expected2[i], actualHeap2[i]);
             assertEquals(expected2[i], actualQuickSelect2[i]);
+            assertEquals(expected2[i], actualBucketSort2[i]);
         }
     }
 }
