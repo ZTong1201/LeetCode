@@ -1,6 +1,9 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class linkedListsIntersection {
 
@@ -10,98 +13,61 @@ public class linkedListsIntersection {
      * A:         a1 -> a2
      *                    \
      *                    c1 -> c2 -> c3
-     *                   /
+     *                    /
      * B:  b1 -> b2 -> b3
      * begin to intersect at node c1.
-     *
+     * <p>
      * Notes:
-     *
+     * <p>
      * If the two linked lists have no intersection at all, return null.
      * The linked lists must retain their original structure after the function returns.
      * You may assume there are no cycles anywhere in the entire linked structure.
-     *
+     * <p>
      * Approach 1: Hash Set
-     * A naive approach is just iterate over one of the linked list (say headA) and add nodes in a hash set. Then we traverse through
-     * another list (headB), If at any time, we reach a node has seen before. We return that node. Otherwise, return null.
-     *
+     * A naive approach is just iterate over one of the linked list (say headB) and add nodes in a hash set. Then we traverse through
+     * another list (headA), If at any time, we reach a node has seen before. We return that node. Otherwise, return null.
+     * <p>
      * Time: O(max(m, n)), the overall runtime is determined by the longest linked list
      * Space: O(m) or O(n), we need a hash set to record node seen so far in headA
      */
     public ListNode getIntersectionNodeHashSet(ListNode headA, ListNode headB) {
-        ListNode ptrA = headA;
-        ListNode ptrB = headB;
-        Set<ListNode> nodeSeen = new HashSet<>();
-        while(ptrA != null) {
-            nodeSeen.add(ptrA);
-            ptrA = ptrA.next;
+        Set<ListNode> seen = new HashSet<>();
+        while (headB != null) {
+            seen.add(headB);
+            headB = headB.next;
         }
-        while(ptrB != null) {
-            if(nodeSeen.contains(ptrB)) return ptrB;
-            ptrB = ptrB.next;
+
+        while (headA != null) {
+            if (seen.contains(headA)) return headA;
+            headA = headA.next;
         }
         return null;
     }
 
     /**
      * Approach 2: Two Pointers
-     * We can find the intersection without extra space by using two pointers. In this case, we need two passes.
-     * The first pass, we iterate over two lists separately to record the length of each list, and check whether they have different tails
-     * If the tails are different, it indicates that they don't have an intersection, return null directly. Otherwise, we traverse a second
-     * pass to find the intersection.
-     * Ideally, if we have two lists with the same length, we move from the head one step a time, by the time they reach the same node,
-     * that is exactly the intersection. In other cases, we make the longer list skip the first abs(lenA- lenB) nodes so that they have
-     * the same length. We can move one step at a time now to find the intersection.
-     *
-     * Time: O(max(m, n))
-     *      First pass: we traverse two lists separately, the runtime is determined by the longest list
-     *      Skip nodes: the longest list will skip the first abs(lenA - lenB) nodes
-     *      Second pass: Two lists will iterate over the same steps. In the worst case, it equals to the smallest length of two lists. O(min(m, n))
-     *      Overall, it is O(max(m, n))
+     * Assume the intersection is of length L (if two lists don't have an intersection, then the length is 0), hence the
+     * length of list A is x + L (m) and length of list B is y + L (n). We can keep traversing across two lists, i.e. if
+     * the traversal on list A is done - then we start traversing list B. Then when there is actually an intersection between
+     * two lists. The two pointers will meet at the intersection point because now two pointers both travelled x + y + L.
+     * If there is no intersection, these two pointers will hit null pointer at the same time. In other words, L is 0, and
+     * both pointers have travelled x + y.
+     * <p>
+     * Time: O(m + n)
      * Space: O(1), we only assign pointers, it requires a constant size
      */
     public ListNode getIntersectionNodeTwoPointers(ListNode headA, ListNode headB) {
-        if(headA == null || headB == null) return null; //check corner case
-        ListNode ptrA = headA;
-        ListNode ptrB = headB;
-        int lenA = 1;
-        int lenB = 1;
-        /**
-         * First pass: we will know
-         * 1. The lengths of two lists
-         * 2. The tail nodes for each list
-         * 3. If the tail nodes are different, we simply return null.
-         */
-        while(ptrA.next != null) {
-            ptrA = ptrA.next;
-            lenA += 1;
-        }
-        while(ptrB.next != null) {
-            ptrB = ptrB.next;
-            lenB += 1;
-        }
-        if(ptrA != ptrB) return null;
+        ListNode ptr1 = headA, ptr2 = headB;
 
-        int skip = Math.abs(lenA - lenB); //determine skip steps for the longer list
-        //reassign pointers for second pass
-        ptrA = headA;
-        ptrB = headB;
-        if(lenA > lenB) {
-            while(skip > 0) {
-                ptrA = ptrA.next;
-                skip -= 1;
-            }
-        } else {
-            while(skip > 0) {
-                ptrB = ptrB.next;
-                skip -= 1;
-            }
+        // keep traversing as long as two pointers don't meet
+        while (ptr1 != ptr2) {
+            // if list 1 has been completely traversed - move  to list 2
+            ptr1 = ptr1 == null ? headB : ptr1.next;
+            // same thing happens for pointer 2
+            ptr2 = ptr2 == null ? headA : ptr2.next;
         }
-
-        while(ptrA != ptrB) {
-            ptrA = ptrA.next;
-            ptrB = ptrB.next;
-        }
-        return ptrA;
+        // return the intersection (or it will be null if there is no intersection at all)
+        return ptr1;
     }
 
 
