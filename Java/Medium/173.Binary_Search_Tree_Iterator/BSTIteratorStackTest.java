@@ -1,10 +1,13 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class BSTIteratorControlledRecursionTest extends BSTIteratorControlledRecursion {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class BSTIteratorStackTest {
 
     @Test
-    public void BSTIteratorControlledRecursionTest() {
+    public void bstIteratorStackTest() {
         /**
          * Example:
          *            7
@@ -29,7 +32,7 @@ public class BSTIteratorControlledRecursionTest extends BSTIteratorControlledRec
         tree.right = new TreeNode(15);
         tree.right.left = new TreeNode(9);
         tree.right.right = new TreeNode(20);
-        BSTIteratorControlledRecursion iterator = new BSTIteratorControlledRecursion(tree);
+        BSTIteratorStack iterator = new BSTIteratorStack(tree);
         assertEquals(3, iterator.next());
         assertEquals(7, iterator.next());
         assertTrue(iterator.hasNext());
