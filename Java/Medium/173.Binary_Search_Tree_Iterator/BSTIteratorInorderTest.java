@@ -1,10 +1,13 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class BSTIteratorInorderTest extends BSTIteratorInorder{
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class BSTIteratorInorderTest {
 
     @Test
-    public void BSTIteratorInorderTest() {
+    public void bstIteratorInorderTest() {
         /**
          * Example:
          *            7
