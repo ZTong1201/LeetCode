@@ -1,5 +1,6 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class addTwoNumbers {
 
@@ -7,15 +8,15 @@ public class addTwoNumbers {
      * You are given two non-empty linked lists representing two non-negative integers.
      * The digits are stored in reverse order and each of their nodes contain a single digit.
      * Add the two numbers and return it as a linked list.
-     *
+     * <p>
      * You may assume the two numbers do not contain any leading zero, except the number 0 itself.
-     *
+     * <p>
      * Just like sum two integer numbers, we begin by summing the least-significant digits. It should be noted that
      * summing two digits in range (0, 9) may lead to "overflow", e.g. 5 + 7 = 12, we will leave 2 at current node and carry 1
      * to the next iteration. The carry number can be either 0 or 1 since the largest possible sum of two digits is 1 + 9 + 9 = 19
-     *
+     * <p>
      * The algorithm looks like this:
-     *
+     * <p>
      * 1. Initialize a dummy node for returning list, set a pointer to the head of it
      * 2. Initialize the carry number as 0
      * 3. Get x value from list 1, if l1 == null, set x = 0;
@@ -26,7 +27,7 @@ public class addTwoNumbers {
      * 8. Iterate to next node for both lists
      * 9. If both lists reach the end, check whether we should add one more node (check carry num == 1)
      * 10. Return dummy head's next node
-     * 
+     * <p>
      * Time: O(max(m, n)) we iterate over both nodes to the end, so the overall runtime is determined by the longest linked list
      * Space: O(max(m, n)), we create a new returning list which is at most of length max(m, n) + 1
      */
@@ -34,17 +35,17 @@ public class addTwoNumbers {
         ListNode res = new ListNode(0);
         int carry = 0;
         ListNode ptr = res;
-        while(l1 != null || l2 != null) {
+        while (l1 != null || l2 != null) {
             int x = l1 == null ? 0 : l1.val;
             int y = l2 == null ? 0 : l2.val;
             int sum = x + y + carry;
             ptr.next = new ListNode(sum % 10);
             ptr = ptr.next;
             carry = sum / 10;
-            if(l1 != null) l1 = l1.next;
-            if(l2 != null) l2 = l2.next;
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
         }
-        if(carry == 1) ptr.next = new ListNode(1);
+        if (carry == 1) ptr.next = new ListNode(1);
         return res.next;
     }
 
@@ -108,14 +109,14 @@ public class addTwoNumbers {
 
     private int[] linkedListToArray(ListNode head, int n) {
         int[] res = new int[n];
-        for(int i = n - 1; i >= 0; i--) {
+        for (int i = n - 1; i >= 0; i--) {
             res[i] = head.val;
             head = head.next;
         }
         return res;
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
 
