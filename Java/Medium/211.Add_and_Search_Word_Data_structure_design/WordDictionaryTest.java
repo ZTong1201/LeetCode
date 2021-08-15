@@ -1,7 +1,9 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class wordDictionaryTest {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class WordDictionaryTest {
 
     @Test
     public void wordDictionaryTest() {
@@ -15,7 +17,7 @@ public class wordDictionaryTest {
          * search(".ad") -> true
          * search("b..") -> true
          */
-        wordDictionary wordDict1 = new wordDictionary();
+        WordDictionary wordDict1 = new WordDictionary();
         wordDict1.addWord("bad");
         wordDict1.addWord("dad");
         wordDict1.addWord("mad");
@@ -34,7 +36,7 @@ public class wordDictionaryTest {
          * search("..") -> false
          * search("a.") -> false
          */
-        wordDictionary wordDict2 = new wordDictionary();
+        WordDictionary wordDict2 = new WordDictionary();
         wordDict2.addWord("a");
         wordDict2.addWord("a");
         assertTrue(wordDict2.search("a"));
