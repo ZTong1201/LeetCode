@@ -5,6 +5,11 @@ public class WordFilterSuffixWrappedWords {
      * Actually, we could change the word a little by adding substrings of the suffix ahead of the original word. For instance,
      * for word "apple", we add "#apple", "e#apple", "le#apple", "ple#apple", "pple#apple", and "apple#apple" into the trie.
      * During query, we search whether suffix#prefix exists in the trie, e.g. prefix = "ap", suffix = "le", we query "le#ap"
+     * <p>
+     * Time:
+     * Constructor: O(N * L^2) since now we will have L(L + 1)/2 suffix + prefix combinations to be inserted into the trie
+     * Query: O(L) now we only need to search the length of 2L at most
+     * Space: O(N * L^2) for building the trie
      */
     private final TrieNode head;
 
