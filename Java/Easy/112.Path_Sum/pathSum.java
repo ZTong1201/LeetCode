@@ -1,32 +1,37 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 public class pathSum {
 
     /**
      * Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that
      * adding up all the values along the path equals the given sum.
-     *
+     * <p>
      * Note: A leaf is a node with no children.
-     *
-     *
+     * <p>
+     * <p>
      * Time: O(N) since we traverse all the nodes once
      * Space: call stack costs O(N) for a completely unbalanced tree, O(logN) for a balanced tree;
-     *        We also need a set to store all the path sum (which equals to the number of leaves in the tree)
-     *        O(1) for a completely imbalanced tree, and O(N) for a balanced tree since we need to store N/2 leaves
-     *        at the bottom level.
+     * We also need a set to store all the path sum (which equals to the number of leaves in the tree)
+     * O(1) for a completely imbalanced tree, and O(N) for a balanced tree since we need to store N/2 leaves
+     * at the bottom level.
      */
+    private Set<Integer> pathSumSet;
+    
     public boolean hasPathSum1(TreeNode root, int sum) {
+        pathSumSet = new HashSet<>();
         allPathSum(root, 0);
         return pathSumSet.contains(sum);
     }
 
-    private Set<Integer> pathSumSet = new HashSet<>();
-
     private void allPathSum(TreeNode root, int sum) {
-        if(root == null) return;
-        if(root.left == null && root.right == null) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
             sum += root.val;
             pathSumSet.add(sum);
         } else {
@@ -37,38 +42,39 @@ public class pathSum {
 
     /**
      * Actually we can return true as long as we find the target value in the tree
-     *
+     * <p>
      * Time: still be O(N) since in the worst case we need to traverse all the nodes
      * Space: call stack costs O(N) for a completely unbalanced tree, O(logN) for a balanced tree;
      */
-    public boolean hasPathSum2(TreeNode root, int sum) {
-        if(root == null) return false;
-        sum -= root.val;
-        if(root.left == null && root.right == null) return (sum == 0);
-        return hasPathSum2(root.left, sum) || hasPathSum2(root.right, sum);
+    public boolean hasPathSum2(TreeNode root, int targetSum) {
+        if (root == null) return false;
+        // if it's a leaf node - check whether subtracting current root value can make target sum 0
+        if (root.left == null && root.right == null) return (targetSum == root.val);
+        // check paths in both left & right subtree
+        return hasPathSum2(root.left, targetSum - root.val) || hasPathSum2(root.right, targetSum - root.val);
     }
 
     /**
      * We can also implement this Depth-first search in a iterative way
-     *
+     * <p>
      * Time: O(N)
      * Space: O(N) for a completely unbalanced tree, O(logN) for a balanced tree
      */
     public boolean hasPathSum2Iterative(TreeNode root, int sum) {
-        if(root == null) return false;
+        if (root == null) return false;
         LinkedList<TreeNode> nodeStack = new LinkedList<>();
         LinkedList<Integer> sumStack = new LinkedList<>();
         nodeStack.add(root);
         sumStack.add(sum - root.val);
-        while(!nodeStack.isEmpty()) {
+        while (!nodeStack.isEmpty()) {
             TreeNode currNode = nodeStack.pollLast();
             int currSum = sumStack.pollLast();
-            if(currNode.left == null && currNode.right == null && currSum == 0) return true;
-            if(currNode.left != null) {
+            if (currNode.left == null && currNode.right == null && currSum == 0) return true;
+            if (currNode.left != null) {
                 nodeStack.add(currNode.left);
                 sumStack.add(currSum - currNode.left.val);
             }
-            if(currNode.right != null) {
+            if (currNode.right != null) {
                 nodeStack.add(currNode.right);
                 sumStack.add(currSum - currNode.right.val);
             }
