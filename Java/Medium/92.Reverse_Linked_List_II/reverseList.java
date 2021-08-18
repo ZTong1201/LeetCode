@@ -1,48 +1,49 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class reverseList {
 
     /**
      * Reverse a linked list from position m to n. Do it in one-pass.
-     *
+     * <p>
      * Note: 1 ≤ m ≤ n ≤ length of list.
-     *
+     * <p>
      * Approach 1: Iteration
      * Just like reverse the whole linked list, when we find the correct position, we could easily reverse the list in between use
      * the three pointers trick. However, since we have to do one-pass, we need to record the node before we start reverse (front),
      * and the tail node of the reversed list (tail). We'll assign the reversed list to front.next, and assign the rest of list to
      * tail.next. In this case, front is the previous node of start node, and tail is just the initial start node. After reversing, the
      * start node becomes the tail.
-     *
+     * <p>
      * Meanwhile, for the sake of simplicity to handle edge cases and m = 1, we build a dummy node at the very beginning to guarantee
      * that we always at least have two nodes in the list.
-     *
+     * <p>
      * Time: O(n), we do it in one-pass;
      * Space: O(1), we just assign pointers, no extra space required
      */
-    public ListNode reverseBetweenIterative(ListNode head, int m, int n) {
-        ListNode dummy = new ListNode(0);
+    public ListNode reverseBetweenIterative(ListNode head, int left, int right) {
+        ListNode dummy = new ListNode();
         dummy.next = head;
         //assign two pointers
         ListNode prev = dummy;
         ListNode curr = dummy.next;
         //move two pointers to the correct starting node
-        while(m > 1) {
+        while (left > 1) {
             prev = prev.next;
             curr = curr.next;
-            m -= 1;
-            n -= 1;
+            left--;
+            right--;
         }
 
         //We are at the starting node, assign the front and the tail pointers
         ListNode front = prev, tail = curr;
-        while(n > 0) {
+        while (right > 0) {
             ListNode temp = curr.next;
             curr.next = prev;
             prev = curr;
             curr = temp;
-            n -= 1;
+            right--;
         }
         front.next = prev;
         tail.next = curr;
@@ -51,46 +52,48 @@ public class reverseList {
 
     /**
      * Approach 2: Recursion
-     * Just like reverse an array recursively, we simply assign two pointers, and swap these values, and move the pointers to each other.
-     * When these two pointers crossed, then we are done.
-     *
-     * In this problem, we take this idea and swap the values of two nodes in the given interval. In order to move two pointers,
-     * we make the left pointer as a global variable to record its stage, and use backtracking to retrieve the previous stage of right
-     * pointer. When the length of to be reversed list is odd, we stop swapping when left == right. otherwise, we will stop when right
-     * pointer moves to the left of the left pointer, a.k.a right.next = left.
-     *
+     * Actually we can break the problem into two problems: 1. reverse N elements from the beginning of the list 2. skip
+     * the first left - 1 elements and reverse (right - left) elements subsequently.
+     * <p>
+     * The first problem is pretty much the same as reversing the entire list. However, in order to reverse the whole list,
+     * we always assign head.next as null since it will always be the tail of the list. As for reversing first N elements,
+     * when the element is reached, we need keep track of its successor (head.next) and always assign the tail of the list
+     * to that successor in each recursion call.
+     * <p>
+     * Then, we tackle the second problem by recursively skipping first left - 1 elements and start calling reversing N
+     * elements from there
      * Time: O(n), we typically do it by one-pass. However, in the worst, we may do it in two-pass
      * Space: O(1), only assigned pointers, no extra space required
      */
-    private ListNode left;
-    private boolean stop;
+    private ListNode successor;
 
-    public ListNode reverseBetweenRecursive(ListNode head, int m, int n) {
-        this.left = head;
-        this.stop = false;
-        ListNode right = head;
-        helper(right, m, n);
+    public ListNode reverseBetweenRecursive(ListNode head, int left, int right) {
+        // when m is 1, we are just basically reversing right elements from the beginning
+        // (first left elements have been skipped)
+        if (left == 1) {
+            return reverseN(head, right);
+        }
+        // recursively skipping first left elements
+        head.next = reverseBetweenRecursive(head.next, left - 1, right - 1);
         return head;
     }
 
-    private void helper(ListNode right, int m, int n) {
-        //base case, if n == 1 we do nothing
-        if(n == 1) return;
-        //move the right pointer to the end of the to be reversed node
-        right = right.next;
-        //if m > 1, which means we haven't reached the starting node, move the left pointer as well
-        if(m > 1) this.left = this.left.next;
-
-        helper(right, m - 1, n - 1);
-        //when two pointers cross, we stop swapping
-        if(this.left == right || right.next == this.left) this.stop = true;
-        //if the stopping criterion is not satisfied, swap the elements
-        if(!this.stop) {
-            int tmp = this.left.val;
-            this.left.val = right.val;
-            right.val = tmp;
-            this.left = this.left.next;
+    private ListNode reverseN(ListNode head, int n) {
+        // base case, if we reach the end of the list we need to reverse
+        if (n == 1) {
+            // keep track of the tail of the rest list
+            // which will always be assigned to the end of reversed list
+            successor = head.next;
+            return head;
         }
+        // recursively reversing first N elements in head
+        ListNode p = reverseN(head.next, n - 1);
+        // after hitting the end
+        // reverse the list structure
+        head.next.next = head;
+        // reassign the tail of the reversed list to avoid cycle
+        head.next = successor;
+        return p;
     }
 
 
@@ -151,16 +154,20 @@ public class reverseList {
 
     private int[] linkedListToArray(ListNode head, int length) {
         int[] res = new int[length];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             res[i] = head.val;
             head = head.next;
         }
         return res;
     }
 
-    private class ListNode {
+    private static class ListNode {
         int val;
         ListNode next;
+
+        ListNode() {
+            
+        }
 
         ListNode(int x) {
             this.val = x;
