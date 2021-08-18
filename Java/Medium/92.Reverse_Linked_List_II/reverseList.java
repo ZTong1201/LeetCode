@@ -101,7 +101,7 @@ public class reverseList {
     public void reverseBetweenRecursiveTest() {
         /**
          * Example 1:
-         * Input: 1->2->3->4->5->NULL, m = 2, n = 4
+         * Input: 1->2->3->4->5->NULL, left = 2, right = 4
          * Output: 1->4->3->2->5->NULL
          */
         ListNode list1 = new ListNode(1);
@@ -114,7 +114,7 @@ public class reverseList {
         assertArrayEquals(expected1, actual1);
         /**
          * Example 2:
-         * Input: 3->5->NULL, m = 1, n = 2
+         * Input: 3->5->NULL, left = 1, right = 2
          * Output: 5->3->NULL
          */
         ListNode list2 = new ListNode(3);
@@ -128,7 +128,7 @@ public class reverseList {
     public void reverseBetweenIterativeTest() {
         /**
          * Example 1:
-         * Input: 1->2->3->4->5->NULL, m = 2, n = 4
+         * Input: 1->2->3->4->5->NULL, left = 2, right = 4
          * Output: 1->4->3->2->5->NULL
          */
         ListNode list1 = new ListNode(1);
@@ -141,7 +141,7 @@ public class reverseList {
         assertArrayEquals(expected1, actual1);
         /**
          * Example 2:
-         * Input: 3->5->NULL, m = 1, n = 2
+         * Input: 3->5->NULL, left = 1, right = 2
          * Output: 5->3->NULL
          */
         ListNode list2 = new ListNode(3);
@@ -166,7 +166,7 @@ public class reverseList {
         ListNode next;
 
         ListNode() {
-            
+
         }
 
         ListNode(int x) {
