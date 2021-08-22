@@ -24,8 +24,11 @@ public class NQueens {
      * picking a place at each row. If at a given place, it violates the rule (two queens cannot attach each other), we
      * immediately dump the solution and keep searching the next possible place.
      * <p>
-     * Time:
-     * Space:
+     * Time: O(N!) when a column is picked at a given, there is no way we can place a queen in that row. Hence, we have N
+     * choices in the first row, N - 1 choices in the second row, ... we have N * (N - 1) * (N - 2) = N! options to search.
+     * Even though we need to check whether a given option is a possible layout, which might take O(N^2) time in the worst
+     * case, however, the number of all possible options will eventually dominate the runtime.
+     * Space: O(N^2) we need a 2-D array to keep track of whether a cell has been placed with a queen
      */
     private List<List<String>> res;
     private boolean[][] placed;
@@ -45,17 +48,17 @@ public class NQueens {
             return;
         }
         // enumerate all possible places at a given row
-        for (int i = 0; i < n; i++) {
+        for (int col = 0; col < n; col++) {
             // check whether placing a queen at current cell is valid
-            if (!canPlaceAtIndex(row, i, n)) continue;
+            if (!canPlaceAtIndex(row, col, n)) continue;
             // only proceed when it's valid
             // construct the row by placing the queen at column i
-            String currRow = constructRow(i, n);
+            String currRow = constructRow(col, n);
 
             // add current row to the grid
             grid.add(currRow);
             // mark current cell as visited
-            placed[row][i] = true;
+            placed[row][col] = true;
 
             // keep placing a queen in the next row
             dfs(row + 1, n, grid);
@@ -64,7 +67,7 @@ public class NQueens {
             // remove the previous valid row
             grid.remove(grid.size() - 1);
             // mark the cell as unvisited again
-            placed[row][i] = false;
+            placed[row][col] = false;
         }
     }
 
