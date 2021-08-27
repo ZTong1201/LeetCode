@@ -69,22 +69,25 @@ public class WordLadder {
         // a hash set to record visited nodes to avoid cycles
         Set<String> seen = new HashSet<>();
         while (!queue.isEmpty()) {
-            // the current word for searching
-            String curr = queue.remove();
+            int size = queue.size();
             // increment the number of changes to make the end word
             res++;
-            // return the result if we hit the end word
-            if (curr.equals(endWord)) return res;
-            // avoid revisiting nodes
-            if (!seen.contains(curr)) {
-                seen.add(curr);
-                for (int i = 0; i < length; i++) {
-                    // find all the wildcard words for current word
-                    String newWord = curr.substring(0, i) + "*" + curr.substring(i + 1);
-                    // find all the words in the list match the wildcard pattern
-                    for (String neighbor : graph.getOrDefault(newWord, new ArrayList<>())) {
-                        // otherwise, we have visited a new node, we add it to the queue for further searching
-                        queue.add(neighbor);
+            for (int i = 0; i < size; i++) {
+                // the current word for searching
+                String curr = queue.poll();
+                // return the result if we hit the end word
+                if (curr.equals(endWord)) return res;
+                // avoid revisiting nodes
+                if (!seen.contains(curr)) {
+                    seen.add(curr);
+                    for (int j = 0; j < length; j++) {
+                        // find all the wildcard words for current word
+                        String newWord = curr.substring(0, j) + "*" + curr.substring(j + 1);
+                        // find all the words in the list match the wildcard pattern
+                        for (String neighbor : graph.getOrDefault(newWord, new ArrayList<>())) {
+                            // otherwise, we have visited a new node, we add it to the queue for further searching
+                            queue.add(neighbor);
+                        }
                     }
                 }
             }
