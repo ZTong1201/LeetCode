@@ -31,7 +31,7 @@ public class LongestConsecutiveSeq {
         for (int num : seen) {
             //先判断当前元素是不是当前sequence的最小元素，即num - 1不在set中
             if (!seen.contains(num - 1)) {
-                //那么就以当前元素为起点，寻找可能的最长sequ
+                //那么就以当前元素为起点，寻找可能的最长sequence
                 int currVal = num, currLongest = 1;
 
                 while (seen.contains(currVal + 1)) {
