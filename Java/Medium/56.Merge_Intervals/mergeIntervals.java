@@ -1,6 +1,18 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.Stack;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class mergeIntervals {
 
@@ -9,22 +21,21 @@ public class mergeIntervals {
      * Approach 1: Sorting
      * Sorting the initial intervals, then all overlapping intervals will be close to each other. As we iterate over the whole interval
      * array, if they overlaps, update the end time, otherwise, add it directly into result
-     *
+     * <p>
      * Time: O(nlogn) for typical sorting algorithm
      * Space: O(n) depends on sorting algorithm, it cost O(1) or O(n) space. we need a linked list to contain intervals and then convert
-     *       it back to 2-d array
+     * it back to 2-d array
      */
     public int[][] mergeSorting(int[][] intervals) {
         //the reason use a linked list is to get the last element in the list in O(1) time
         LinkedList<int[]> res = new LinkedList<>();
-        //lambda comparator function for sorting intervals
-        Comparator<int[]> intervalComparator = (int[] a, int[] b) -> {
-            return a[0] - b[0];
-        };
-        Arrays.sort(intervals, intervalComparator);
-        for(int[] interval : intervals) {
+        Arrays.sort(intervals, (int[] a, int[] b) -> {
+            if (a[0] == b[0]) return a[1] - b[1];
+            else return a[0] - b[0];
+        });
+        for (int[] interval : intervals) {
             //if it is the first interval or the top interval has no overlaps with the current interval we care, add it to the list
-            if(res.isEmpty() || interval[0] > res.getLast()[1]) {
+            if (res.isEmpty() || interval[0] > res.getLast()[1]) {
                 res.add(interval);
             } else {
                 //otherwise, they overlap, update the ending time with the maximum
@@ -37,7 +48,7 @@ public class mergeIntervals {
     private int[][] listToArray(LinkedList<int[]> res) {
         int length = res.size();
         int[][] arr = new int[length][2];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             arr[i] = res.removeFirst();
         }
         return arr;
@@ -80,7 +91,7 @@ public class mergeIntervals {
     /**
      * Approach 2: Priority Queue
      * If sorting is not allowed, simply put all the elements in the min priority queue, and each time remove the smallest element from it
-     *
+     * <p>
      * Time: O(nlogn)
      * Space: O(2n) a minPQ requires O(n) space and the result list requires O(n) space as well
      */
@@ -90,12 +101,10 @@ public class mergeIntervals {
             return a[0] - b[0];
         };
         PriorityQueue<int[]> minPQ = new PriorityQueue<>(intervalComparator);
-        for(int[] interval : intervals) {
-            minPQ.add(interval);
-        }
-        while(!minPQ.isEmpty()) {
+        minPQ.addAll(Arrays.asList(intervals));
+        while (!minPQ.isEmpty()) {
             int[] interval = minPQ.poll();
-            if(res.isEmpty() || interval[0] > res.getLast()[1]) {
+            if (res.isEmpty() || interval[0] > res.getLast()[1]) {
                 res.add(interval);
             } else {
                 res.getLast()[1] = Math.max(res.getLast()[1], interval[1]);
@@ -143,10 +152,10 @@ public class mergeIntervals {
      * Construct a graph based on the intervals. Treat each interval as a node in the graph, if two intervals have overlaps, there is
      * an unweighted edge connect these two nodes. After constructing the graph, and connect nodes which overlap with each other. We simply
      * merge the intervals within each connected component with the minimum start time and the maximum end time.
-     *
+     * <p>
      * Time: O(n^2) build the graph cost O(V + E) = O(n) + O(n^2) = O(n^2) since in the worst case, all the intervals overlap with each other, we need
-     *      add edges between each node. Traversal costs the same time. Merge intervals within each connected component cost O(V) = O(n) time
-     *      Overall, it is O(n^2)
+     * add edges between each node. Traversal costs the same time. Merge intervals within each connected component cost O(V) = O(n) time
+     * Overall, it is O(n^2)
      * Space: O(n^2), the graph hash map will cost O(n^2) if all the intervals overlap, which will dominate the space complexity.
      */
     private Map<int[], List<int[]>> graph;
@@ -162,13 +171,13 @@ public class mergeIntervals {
     private void buildGraph(int[][] intervals) {
         graph = new HashMap<>();
 
-        for(int[] interval : intervals) {
+        for (int[] interval : intervals) {
             graph.put(interval, new ArrayList<>());
         }
 
-        for(int[] interval1 : intervals) {
-            for(int[] interval2 : intervals) {
-                if(isOverlap(interval1, interval2)) {
+        for (int[] interval1 : intervals) {
+            for (int[] interval2 : intervals) {
+                if (isOverlap(interval1, interval2)) {
                     //note that the edges are bidirectional
                     graph.get(interval1).add(interval2);
                     graph.get(interval2).add(interval1);
@@ -185,9 +194,9 @@ public class mergeIntervals {
         nodesInComp = new HashMap<>();
         int compNumber = 0;
 
-        for(int[] interval : intervals) {
+        for (int[] interval : intervals) {
             //only search those nodes who haven't been visited
-            if(!visited.contains(interval)) {
+            if (!visited.contains(interval)) {
                 //implement dfs to build current connected component
                 dfs(interval, compNumber);
                 //after this component has been built, increment the component number
@@ -201,23 +210,23 @@ public class mergeIntervals {
         Stack<int[]> stack = new Stack<>();
         stack.push(start);
 
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             //current interval we car about
             int[] node = stack.pop();
             //only visit the node if it is unvisited
-            if(!visited.contains(node)) {
+            if (!visited.contains(node)) {
                 //add the node into the set since we have visited
                 visited.add(node);
 
                 //if nothing in the current component, add a new empty list to it
-                if(nodesInComp.get(compNumber) == null) {
+                if (nodesInComp.get(compNumber) == null) {
                     nodesInComp.put(compNumber, new ArrayList<>());
                 }
                 //add nodes into the component
                 nodesInComp.get(compNumber).add(node);
 
                 //implement dfs by adding all nodes with an edge in between
-                for(int[] child : graph.get(node)) {
+                for (int[] child : graph.get(node)) {
                     stack.push(child);
                 }
             }
@@ -229,7 +238,7 @@ public class mergeIntervals {
 
         int minStart = Integer.MAX_VALUE, maxEnd = Integer.MIN_VALUE;
 
-        for(int[] node : nodes) {
+        for (int[] node : nodes) {
             minStart = Math.min(minStart, node[0]);
             maxEnd = Math.max(maxEnd, node[1]);
         }
@@ -246,7 +255,7 @@ public class mergeIntervals {
 
         List<int[]> res = new ArrayList<>();
         //iterate over all the connected components and the merge all the intervals in it
-        for(int comp = 0; comp < nodesInComp.size(); comp++) {
+        for (int comp = 0; comp < nodesInComp.size(); comp++) {
             res.add(mergeNodes(nodesInComp.get(comp)));
         }
         return listToArray(res);
@@ -256,7 +265,7 @@ public class mergeIntervals {
     private int[][] listToArray(List<int[]> res) {
         int length = res.size();
         int[][] arr = new int[length][2];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             arr[i] = res.get(i);
         }
         return arr;
