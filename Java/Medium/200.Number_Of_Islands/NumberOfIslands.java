@@ -5,7 +5,7 @@ import java.util.Queue;
 
 import static org.junit.Assert.assertEquals;
 
-public class Number_Of_Islands {
+public class NumberOfIslands {
 
     /**
      * Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return
@@ -26,7 +26,7 @@ public class Number_Of_Islands {
      * Time: O(M * N) it's required to traverse the entire map to find the count
      * Space: O(M * N) the call stack will be of size M * N in the worst case
      */
-    public int numIslands(char[][] grid) {
+    public int numIslandsDFS(char[][] grid) {
         int count = 0;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -50,7 +50,13 @@ public class Number_Of_Islands {
         dfs(grid, i, j + 1);
     }
 
-    public int numIslandsBfs(char[][] grid) {
+    /**
+     * Approach 2: Breadth-First Search (BFS)
+     * <p>
+     * Time: O(M * N)
+     * Space: O(sqrt(M * N)) -> O(min(M, N)) when M and N are positive integers
+     */
+    public int numIslandsBFS(char[][] grid) {
         int nr = grid.length, nc = grid[0].length;
         int count = 0;
         for (int i = 0; i < nr; i++) {
@@ -90,13 +96,6 @@ public class Number_Of_Islands {
         return count;
     }
 
-    /**
-     * Approach 2: Breadth-First Search (BFS)
-     * <p>
-     * Time: O(M * N)
-     * Space: O(sqrt(M * N)) -> O(min(M, N)) when M and N are positive integers
-     */
-
     @Test
     public void numberOfIslandsDfsTest() {
         /**
@@ -113,7 +112,7 @@ public class Number_Of_Islands {
                 {'1', '1', '0', '1', '0'},
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '0', '0', '0'}};
-        assertEquals(1, numIslands(test1));
+        assertEquals(1, numIslandsDFS(test1));
         /**
          * Example 2:
          * Input: grid = [
@@ -128,7 +127,7 @@ public class Number_Of_Islands {
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '1', '0', '0'},
                 {'0', '0', '0', '1', '1'}};
-        assertEquals(3, numIslands(test2));
+        assertEquals(3, numIslandsDFS(test2));
     }
 
     @Test
@@ -147,7 +146,7 @@ public class Number_Of_Islands {
                 {'1', '1', '0', '1', '0'},
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '0', '0', '0'}};
-        assertEquals(1, numIslandsBfs(test1));
+        assertEquals(1, numIslandsBFS(test1));
         /**
          * Example 2:
          * Input: grid = [
@@ -162,6 +161,6 @@ public class Number_Of_Islands {
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '1', '0', '0'},
                 {'0', '0', '0', '1', '1'}};
-        assertEquals(3, numIslandsBfs(test2));
+        assertEquals(3, numIslandsBFS(test2));
     }
 }
