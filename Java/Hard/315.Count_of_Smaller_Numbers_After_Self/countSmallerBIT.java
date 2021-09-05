@@ -1,6 +1,15 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertEquals;
 
 public class countSmallerBIT {
 
@@ -11,15 +20,15 @@ public class countSmallerBIT {
      * frequency map，记录每个元素出现的次数，当某个元素重复出现，就update对应节点值，而比元素小的元素数量总和就是在fenwick tree小于它的节点的prefix sum
      * 因为输入数组的每个元素的值可能很大，会出现很多redundant节点，因此先将数组进行排序，然后将每个元素和它的rank对应起来。因此对于一个长度为n的数组，其
      * rank的取值为1 - k，k是数组中unique元素的个数。最坏情况下为O(n)。
-     *
+     * <p>
      * Time: O(nlogn) 因为使用Fenwick tree，所以update和query的时间确定为O(logn)，同时因为希望对数组进行排序，要使用treeSet，treeSet中查找每个元素的
-     *      时间也为O(logn)
+     * 时间也为O(logn)
      * Space: O(n), 需要将每个元素和对应的rank对应起来，同时Fenwick tree中的节点个数为unique元素的数量，两者最坏情况都为O(n)空间
      */
     public List<Integer> countSmallerBIT(int[] nums) {
         Set<Integer> sorted = new TreeSet<>();
         //因为要建立元素和rank之间的映射，所以需要用sorted set
-        for(int num : nums) {
+        for (int num : nums) {
             sorted.add(num);
         }
         //tree的节点数量为unique元素的数量
@@ -27,12 +36,12 @@ public class countSmallerBIT {
         Map<Integer, Integer> ranks = new HashMap<>();
         int rank = 0;
         //将sorted set中的元素和rank建立起映射关系
-        for(int num : sorted) {
+        for (int num : sorted) {
             ranks.put(num, ++rank);
         }
         List<Integer> res = new ArrayList<>();
         //然后倒序的访问数组的每一个元素
-        for(int i = nums.length - 1; i >= 0; i--) {
+        for (int i = nums.length - 1; i >= 0; i--) {
             //将小于当前元素的所有元素的数量加起来即为结果
             //因为利用了元素值和rank之间的映射，所以只要求从1到rank - 1的prefix sum即可
             res.add(tree.query(ranks.get(nums[i]) - 1));
@@ -44,8 +53,8 @@ public class countSmallerBIT {
         return res;
     }
 
-    private class FenwickTree {
-        private int[] sum;
+    private static class FenwickTree {
+        private final int[] sum;
 
         public FenwickTree(int size) {
             //因为Fenwick tree节点从1开始，需要size + 1个位置
@@ -55,7 +64,7 @@ public class countSmallerBIT {
         //更新节点值，同时更新所有可能的比它大的节点的值
         //注意更新值用的是变化量delta
         public void update(int i, int delta) {
-            while(i < sum.length) {
+            while (i < sum.length) {
                 sum[i] += delta;
                 i += lowbit(i);
             }
@@ -65,7 +74,7 @@ public class countSmallerBIT {
         //从当前节点寻找比它小的所有可能节点，将所有值累加起来
         public int query(int i) {
             int res = 0;
-            while(i > 0) {
+            while (i > 0) {
                 res += sum[i];
                 i -= lowbit(i);
             }
@@ -93,7 +102,7 @@ public class countSmallerBIT {
         List<Integer> actual = countSmallerBIT(nums);
         List<Integer> expected = new ArrayList<>(Arrays.asList(2, 1, 1, 0));
         assertEquals(expected.size(), actual.size());
-        for(int i = 0; i < expected.size(); i++) {
+        for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), actual.get(i));
         }
     }
