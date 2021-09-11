@@ -23,10 +23,11 @@ public class RussianDollEnvelopes {
      * 1 <= wi, hi <= 10^4
      * <p>
      * Approach 1: DP
-     * We can first sort the envelopes by widths then by heights, now we can make sure we process the smallest envelopes
-     * at first. It's pretty much the same to find the longest increasing subsequence in the array. Hence, we can use DP
-     * to compute it in O(n^2) time.
-     * Denote dp[i] as the longest Russian doll envelopes sequence ending with envelops[i]
+     * We can first sort the envelopes by widths in ascending order then in descending order by heights, now we can make
+     * sure we process the smallest width always comes first. It's pretty much the same to find the longest increasing
+     * subsequence (LIS) in the heights array. Hence, we can use DP to compute it in O(n^2) time.
+     * <p>
+     * Denote dp[i] as the longest Russian doll envelope heights sequence ending with envelops[i]
      * Then we need to iterate over j in [0, i + 1], if that envelops can be fit into envelops[i], then
      * dp[i] = max(dp[i], dp[j] + 1)
      * To initialize the array, we set all dp[i] = 1, since each envelope itself is a Russian doll envelope.
@@ -37,27 +38,23 @@ public class RussianDollEnvelopes {
      * Space: O(n)
      */
     public int maxEnvelopesDP(int[][] envelopes) {
-        // sort all envelops in ascending order by width, then by height
+        // sort all envelops in ascending order by width, then in descending order by height
         Arrays.sort(envelopes, (a, b) -> {
-            if (a[0] == b[0]) return a[1] - b[1];
+            if (a[0] == b[0]) return b[1] - a[1];
             else return a[0] - b[0];
         });
         int n = envelopes.length;
-        int[] dp = new int[n + 1];
+        int[] dp = new int[n];
         Arrays.fill(dp, 1);
+        int res = 1;
 
         for (int i = 1; i < n; i++) {
             for (int j = 0; j < i; j++) {
-                // update the longest Russian doll envelops if we find a strictly smaller one
-                if (envelopes[j][0] < envelopes[i][0] && envelopes[j][1] < envelopes[i][1]) {
+                // update the longest Russian doll envelops if we find a strictly smaller height
+                if (envelopes[j][1] < envelopes[i][1]) {
                     dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
-        }
-
-        int res = 0;
-        // the longest sequence can be ended with any envelope
-        for (int i = 0; i < n; i++) {
             res = Math.max(res, dp[i]);
         }
         return res;
