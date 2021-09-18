@@ -74,6 +74,11 @@ public class AnalyzeUserWebsiteVisitPattern {
             // create a hash set for each user to make sure duplicate view pattern only contribute once
             Set<String> seen = new HashSet<>();
             List<Pair> history = visitedWebsites.get(key);
+            // need to sort the website viewing history to get valid 3-seq only
+            history.sort((a, b) -> {
+                if (a.timestamp == b.timestamp) return a.website.compareTo(b.website);
+                else return a.timestamp - b.timestamp;
+            });
 
             // list all O(n^3) pairs
             for (int first = 0; first < history.size() - 2; first++) {
