@@ -1,8 +1,9 @@
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 public class guessWord {
 
@@ -24,13 +25,23 @@ public class guessWord {
      * <p>
      * Note:  Any solutions that attempt to circumvent the judge will result in disqualification.
      * <p>
+     * Constraints:
+     * <p>
+     * 1 <= wordlist.length <= 100
+     * wordlist[i].length == 6
+     * wordlist[i] consist of lowercase English letters.
+     * All the strings of wordlist are unique.
+     * secret exists in wordlist.
+     * numguesses == 10
+     * <p>
      * Approach: Guess Word with Less Zero Match
      * 本质上，此题是要找到一个搜索策略，即希望根据当前结果，能得到最小的搜索空间。假设有所有的长度为6的字母组合，对于任意一个单词X，和它完全不一样的单词数量为
      * 25^6，有5个位置不一样的数量为C(6, 1) * (25^5)，有4个位置不一样C(6, 2) * (25^4)，意味着若某单词和wordlist中的其他单词match数量越大，说明接下来的
-     * 搜索空间越小。而若某个单词与其他所有单词的zero match数量越大，说明该次guess不是一个好的guess。
+     * 搜索空间越小。而若某个单词与其他所有单词的zero match数量越大，说明该次guess不是一个好的guess。解决此题的要点为舍弃尽可能多的zero match
+     * 同时增加randomness。
      * <p>
      * 所以搜索策略如下：
-     * 1. 每次从剩下的单词中找到与其他单词zero match最少的单词，作为此次guess的单词
+     * 1. 每次从当前单词list中随机选取一个单词作为candidate
      * 2. 若当前单词就是secret word，直接返回
      * 3. 若当前单词不是secret word，则能知道该单词正确字符的个数num，在剩下单词中仅搜索与当前单词字符匹配数目为num的单词，将这些单词作为新的备选单词，继续
      * 重复上述步骤
@@ -41,26 +52,11 @@ public class guessWord {
         List<String> candidates = new ArrayList<>(Arrays.asList(wordlist));
         //最多只能猜10次
         for (int i = 0; i < 10; i++) {
-            Map<String, Integer> zeroMatch = new HashMap<>();
-            for (String word1 : candidates) {
-                //先将每个单词的zero match个数初始化为0
-                zeroMatch.put(word1, 0);
-                for (String word2 : candidates) {
-                    //遍历所有单词，若找到一个zero match的单词，需要更新map中该单词的value
-                    if (match(word1, word2) == 0) {
-                        zeroMatch.put(word1, zeroMatch.get(word1) + 1);
-                    }
-                }
-            }
-            //从map中找到与其他单词zero match最少的单词，作为此次guess
-            int minFreq = Integer.MAX_VALUE;
-            String guessWord = "";
-            for (String word : zeroMatch.keySet()) {
-                if (zeroMatch.get(word) < minFreq) {
-                    minFreq = zeroMatch.get(word);
-                    guessWord = word;
-                }
-            }
+            //增加随机性，每次从当前list中选取一个随机单词
+            Random random = new Random();
+            int pick = random.nextInt(candidates.size());
+            String guessWord = candidates.get(pick);
+
             //若当前单词就是secret word，可以直接返回
             int numOfMatches = master.guess(guessWord);
             if (numOfMatches == 6) return;
@@ -86,19 +82,23 @@ public class guessWord {
         return count;
     }
 
-    /**
-     * Example 1:
-     * Input: secret = "acckzz", wordlist = ["acckzz","ccbazz","eiowzz","abcczz"]
-     *
-     * Explanation:
-     *
-     * master.guess("aaaaaa") returns -1, because "aaaaaa" is not in wordlist.
-     * master.guess("acckzz") returns 6, because "acckzz" is secret and has all 6 matches.
-     * master.guess("ccbazz") returns 3, because "ccbazz" has 3 matches.
-     * master.guess("eiowzz") returns 2, because "eiowzz" has 2 matches.
-     * master.guess("abcczz") returns 4, because "abcczz" has 4 matches.
-     *
-     * We made 5 calls to master.guess and one of them was the secret, so we pass the test case.
-     */
-
+    @Test
+    public void findSecretWordTest() {
+        /**
+         * Example:
+         * Input: secret = "acckzz", wordlist = ["acckzz","ccbazz","eiowzz","abcczz"]
+         *
+         * Explanation:
+         *
+         * master.guess("aaaaaa") returns -1, because "aaaaaa" is not in wordlist.
+         * master.guess("acckzz") returns 6, because "acckzz" is secret and has all 6 matches.
+         * master.guess("ccbazz") returns 3, because "ccbazz" has 3 matches.
+         * master.guess("eiowzz") returns 2, because "eiowzz" has 2 matches.
+         * master.guess("abcczz") returns 4, because "abcczz" has 4 matches.
+         *
+         * We made 5 calls to master.guess and one of them was the secret, so we pass the test case.
+         */
+        WordGuessGameMasterImpl wordGuessGameMaster = new WordGuessGameMasterImpl("acckzz");
+        findSecretWord(new String[]{"acckzz", "ccbazz", "eiowzz", "abcczz"}, wordGuessGameMaster);
+    }
 }
