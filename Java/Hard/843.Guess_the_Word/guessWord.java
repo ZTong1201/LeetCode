@@ -63,7 +63,8 @@ public class guessWord {
             //否则就在剩余单词中找到与当前单词匹配数目为numOfMatches的单词，作为新的candidates
             List<String> temp = new ArrayList<>();
             for (String word : candidates) {
-                if (match(guessWord, word) == numOfMatches) {
+                // no need to add the guessed word into candidate list again
+                if (!word.equals(guessWord) && match(guessWord, word) == numOfMatches) {
                     temp.add(word);
                 }
             }
