@@ -45,7 +45,59 @@ public class KthSmallestElementInSortedMatrix {
     }
 
     /**
-     * Approach 2: Binary Search
+     * Approach 2: Min Heap
+     * We don't actually need to go through the entire grid by taking advantage of the sorted property for each row and column.
+     * Basically, we need to maintain a min heap in which the peek value will always be the smallest value. We then need to do
+     * (k - 1) operations to remove the smallest element from the queue and add a new element into it. Then the peek value will
+     * become the k-th smallest element. How to achieve that? We can first add the first element of each row into the queue
+     * until we have k elements, or k is actually greater than the number of rows, then we add all rows. Why the first element?
+     * Because it's guaranteed to be the smallest element of each row. For easier manipulation, we also add the corresponding
+     * row & col into an object and add it to the queue. Then we need (k - 1) operations to remove the smallest element
+     * from the queue, then add its next element (same row, next column) into the queue. Why? Because it can be even smaller
+     * than the previous elements we added. By doing so, we guaranteed to pop the currently smallest element and add a new one.
+     * In the end, we can get the kth smallest from the top of the queue.
+     * <p>
+     * Time: O(klogM) assume M = min(rows, k), there will always be M elements in the queue and we need (k - 1) operations
+     * to find the smallest
+     * Space: O(M)
+     */
+    public int kthSmallestMinHeap(int[][] matrix, int k) {
+        int rows = matrix.length, cols = matrix[0].length;
+        // elements in heap will be sorted by its value
+        PriorityQueue<Element> minHeap = new PriorityQueue<>((a, b) -> (a.val - b.val));
+        // add the first element of each row into the queue
+        for (int row = 0; row < Math.min(rows, k); row++) {
+            minHeap.add(new Element(matrix[row][0], row, 0));
+        }
+
+        // need (k - 1) operations to find the kth smallest value
+        while (k > 1) {
+            Element smallest = minHeap.poll();
+            int currRow = smallest.row, currCol = smallest.col;
+            // if there are any elements in the same row - add the next smallest one
+            if (currCol + 1 < cols) {
+                minHeap.add(new Element(matrix[currRow][currCol + 1], currRow, currCol + 1));
+            }
+            k--;
+        }
+        // the current top element will be the kth smallest one
+        return minHeap.peek().val;
+    }
+
+    private static class Element {
+        int val;
+        int row;
+        int col;
+
+        public Element(int val, int row, int col) {
+            this.val = val;
+            this.row = row;
+            this.col = col;
+        }
+    }
+
+    /**
+     * Approach 3: Binary Search
      * Since the matrix is sorted, we should always think about using binary search to shrink the search size. Note that if
      * the row and column are guaranteed to be in a non-decreasing order, a matrix will be limited by the top-left & the
      * bottom right corner. For instance, matrix X =
@@ -142,6 +194,7 @@ public class KthSmallestElementInSortedMatrix {
          * Explanation: The elements in the matrix are [1,5,9,10,11,12,13,13,15], and the 8th smallest number is 13
          */
         assertEquals(13, kthSmallestMaxHeap(new int[][]{{1, 5, 9}, {10, 11, 13}, {12, 13, 15}}, 8));
+        assertEquals(13, kthSmallestMinHeap(new int[][]{{1, 5, 9}, {10, 11, 13}, {12, 13, 15}}, 8));
         assertEquals(13, kthSmallestBinarySearch(new int[][]{{1, 5, 9}, {10, 11, 13}, {12, 13, 15}}, 8));
         /**
          * Example 2:
@@ -149,6 +202,7 @@ public class KthSmallestElementInSortedMatrix {
          * Output: -5
          */
         assertEquals(-5, kthSmallestMaxHeap(new int[][]{{-5}}, 1));
+        assertEquals(-5, kthSmallestMinHeap(new int[][]{{-5}}, 1));
         assertEquals(-5, kthSmallestBinarySearch(new int[][]{{-5}}, 1));
     }
 }
