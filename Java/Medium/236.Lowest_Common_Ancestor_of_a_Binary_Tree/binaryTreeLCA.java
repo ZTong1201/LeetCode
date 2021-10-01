@@ -1,22 +1,28 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+
+import static org.junit.Assert.assertEquals;
 
 public class binaryTreeLCA {
 
     /**
      * Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
-     *
+     * <p>
      * According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node
      * in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
-     *
+     * <p>
      * Approach 1: Hash Map
      * Mapping from a node to its parent node as we visited all the nodes. If occasionally two nodes have a same parent node, that is the
      * desired LCA. Otherwise, keep finding all the parent node for one node and record them in a set. If at any time, the other node's
      * parent node in the set, that is the LCA.
-     *
+     * <p>
      * Time: O(N + 2H), since we visit all the nodes first, which cost O(n), and then finding all the parent node for a given node would be
-     *       O(H), where H is the height of the tree. In the worst case, it would be O(3N) = O(N)
+     * O(H), where H is the height of the tree. In the worst case, it would be O(3N) = O(N)
      * Space: O(N + H), hash map require O(N) space, the set requires O(H) space, in the worst case it requires O(2N) = O(N)
      */
     public TreeNode lowestCommonAncestorHashMap(TreeNode root, TreeNode p, TreeNode q) {
@@ -24,26 +30,26 @@ public class binaryTreeLCA {
         //The root node doesn't have a parent node, so assign null to it
         childToParent.put(root, null);
         dfs(childToParent, root);
-        if(childToParent.get(p) == childToParent.get(q)) {
+        if (childToParent.get(p) == childToParent.get(q)) {
             return childToParent.get(p);
         }
         Set<TreeNode> parents = new HashSet<>();
-        if(p != null) {
+        if (p != null) {
             parents.add(p);
             p = childToParent.get(p);
         }
-        while(!parents.contains(q)) {
+        while (!parents.contains(q)) {
             q = childToParent.get(q);
         }
         return q;
     }
 
     private void dfs(Map<TreeNode, TreeNode> map, TreeNode root) {
-        if(root == null) return;
-        if(root.left != null) {
+        if (root == null) return;
+        if (root.left != null) {
             map.put(root.left, root);
         }
-        if(root.right != null) {
+        if (root.right != null) {
             map.put(root.right, root);
         }
         dfs(map, root.left);
@@ -53,7 +59,7 @@ public class binaryTreeLCA {
     /**
      * Approach 2: Iteration
      * Implement DFS using iteration (with stack), can stop searching when we find p and q to save time and space
-     *
+     * <p>
      * Time: O(N)
      * Space: O(N)
      */
@@ -64,26 +70,26 @@ public class binaryTreeLCA {
         parent.put(root, null);
 
         //Iterate until we found both p and q
-        while(!parent.containsKey(p) || !parent.containsKey(q)) {
+        while (!parent.containsKey(p) || !parent.containsKey(q)) {
             TreeNode curr = stack.pop();
 
-            if(curr.left != null) {
+            if (curr.left != null) {
                 parent.put(curr.left, curr);
                 stack.push(curr.left);
             }
-            if(curr.right != null) {
+            if (curr.right != null) {
                 parent.put(curr.right, curr);
                 stack.push(curr.right);
             }
         }
 
         Set<TreeNode> ancestors = new HashSet<>();
-        while(p != null) {
+        while (p != null) {
             ancestors.add(p);
             p = parent.get(p);
         }
 
-        while(!ancestors.contains(q)) {
+        while (!ancestors.contains(q)) {
             q = parent.get(q);
         }
         return q;
@@ -93,7 +99,7 @@ public class binaryTreeLCA {
      * Approach 3: Recursion
      * Need three boolean variables left, right and self corresponding to given the current node (root), whether p or q is in the left
      * subtree, the right subtree or just itself. If any two of these three variables are true, the current node is the LCA.
-     *
+     * <p>
      * Time: O(N) in the worst case, we visited all nodes
      * Space: O(H), where H is the height of the tree, the call stack requires up to O(H) space, in the worst case, it is O(N)
      */
@@ -106,14 +112,14 @@ public class binaryTreeLCA {
 
     private boolean helper(TreeNode[] res, TreeNode root, TreeNode p, TreeNode q) {
         //base case, if we reach a null node without finding p or q, return false;
-        if(root == null) {
+        if (root == null) {
             return false;
         }
         boolean left = helper(res, root.left, p, q); //check left subtree
         boolean right = helper(res, root.right, p, q);//check right subtree
         boolean self = (root == p) || (root == q); //check itself
         //if two of them are true, the current root node is the LCA
-        if(self && left || self && right || left && right) {
+        if (self && left || self && right || left && right) {
             res[0] = root;
         }
         return self || left || right; //if we found p or q, when backtrack, that subtree will always return true
@@ -121,17 +127,17 @@ public class binaryTreeLCA {
 
     /**
      * Approach 4: Directly search for LCA (Recursion)
-     *
+     * <p>
      * Time: O(N)
      * Space: O(H)
      */
     public TreeNode lowestCommonAncestorDirect(TreeNode root, TreeNode p, TreeNode q) {
         //base case, if the current root is null, return null
-        if(root == null) {
+        if (root == null) {
             return null;
         }
         //if we found p or q, return that node
-        if(root == p || root == q) {
+        if (root == p || root == q) {
             return root;
         }
 
@@ -139,7 +145,7 @@ public class binaryTreeLCA {
         TreeNode left = lowestCommonAncestorDirect(root.left, p, q);
         TreeNode right = lowestCommonAncestorDirect(root.right, p, q);
         //if left and right are both not null, we found LCA, return the current node
-        if(left != null && right != null) {
+        if (left != null && right != null) {
             return root;
         }
 
@@ -344,7 +350,7 @@ public class binaryTreeLCA {
     }
 
 
-    private class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
