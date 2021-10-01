@@ -1,35 +1,31 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class RandomizedSetTest {
 
-    /**
-     * Init an empty set.
-     * RandomizedSet randomSet = new RandomizedSet();
-     *
-     * Inserts 1 to the set. Returns true as 1 was inserted successfully.
-     * randomSet.insert(1);
-     *
-     * Returns false as 2 does not exist in the set.
-     * randomSet.remove(2);
-     *
-     * Inserts 2 to the set, returns true. Set now contains [1,2].
-     * randomSet.insert(2);
-     *
-     * getRandom should return either 1 or 2 randomly.
-     * randomSet.getRandom();
-     *
-     * Removes 1 from the set, returns true. Set now contains [2].
-     * randomSet.remove(1);
-     *
-     * 2 was already in the set, so return false.
-     * randomSet.insert(2);
-     *
-     * Since 2 is the only number in the set, getRandom always return 2.
-     * randomSet.getRandom();
-     */
     @Test
     public void randomSetTest() {
+        /**
+         * Example:
+         * Input
+         * ["RandomizedSet", "insert", "remove", "insert", "getRandom", "remove", "insert", "getRandom"]
+         * [[], [1], [2], [2], [], [1], [2], []]
+         * Output
+         * [null, true, false, true, 2, true, false, 2]
+         *
+         * Explanation
+         * RandomizedSet randomizedSet = new RandomizedSet();
+         * randomizedSet.insert(1); // Inserts 1 to the set. Returns true as 1 was inserted successfully.
+         * randomizedSet.remove(2); // Returns false as 2 does not exist in the set.
+         * randomizedSet.insert(2); // Inserts 2 to the set, returns true. Set now contains [1,2].
+         * randomizedSet.getRandom(); // getRandom() should return either 1 or 2 randomly.
+         * randomizedSet.remove(1); // Removes 1 from the set, returns true. Set now contains [2].
+         * randomizedSet.insert(2); // 2 was already in the set, so return false.
+         * randomizedSet.getRandom(); // Since 2 is the only number in the set, getRandom() will always return 2.
+         */
         RandomizedSet randomSet = new RandomizedSet();
         assertTrue(randomSet.insert(1));
         assertFalse(randomSet.remove(2));
@@ -37,6 +33,6 @@ public class RandomizedSetTest {
         assertTrue(randomSet.getRandom() == 1 || randomSet.getRandom() == 2);
         assertTrue(randomSet.remove(1));
         assertFalse(randomSet.insert(2));
-        assertTrue(randomSet.getRandom() == 2);
+        assertEquals(2, randomSet.getRandom());
     }
 }
