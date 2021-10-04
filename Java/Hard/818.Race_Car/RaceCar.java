@@ -46,10 +46,6 @@ public class RaceCar {
      */
     public int raceCarBFS(int target) {
         Set<String> visited = new HashSet<>();
-        // add pos/speed in the set to avoid duplicate visit
-        visited.add("0/1");
-        // never go to the negative side
-        visited.add("0/-1");
         Queue<CarCondition> queue = new LinkedList<>();
         queue.add(new CarCondition(0, 1));
         int res = 0;
@@ -59,24 +55,27 @@ public class RaceCar {
             // execute BFS to sequentially pop every node from the current level
             for (int i = 0; i < size; i++) {
                 CarCondition curr = queue.poll();
-                int pos = curr.pos, speed = curr.speed;
+                int currPos = curr.pos, currSpeed = curr.speed;
 
-                // if accelerate
-                int pos1 = pos + speed, speed1 = speed * 2;
                 // return the shortest length if reaching the target position
-                if (pos1 == target) return res + 1;
-                // never visit nodes which are in the negative side or beyond 2 * target range
-                if (pos1 > 0 && pos1 < 2 * target) {
-                    queue.add(new CarCondition(pos1, speed1));
-                }
+                if (currPos == target) return res;
 
-                // if reverse
-                int speed2 = speed > 0 ? -1 : 1;
-                String R = pos + "/" + speed2;
-                // we can only reach a duplicated position when reversing back
-                if (!visited.contains(R)) {
-                    visited.add(R);
-                    queue.add(new CarCondition(pos, speed2));
+                // serialize the current car condition to avoid duplicate visit
+                String serial = currPos + "/" + currSpeed;
+
+                if (!visited.contains(serial)) {
+                    visited.add(serial);
+
+                    // if accelerate
+                    int newPos1 = currPos + currSpeed, newSpeed1 = currSpeed * 2;
+                    // pruning - never visit nodes which are in the negative side or beyond 2 * target range
+                    if (newPos1 > 0 && newPos1 < 2 * target) {
+                        queue.add(new CarCondition(newPos1, newSpeed1));
+                    }
+
+                    // if reverse
+                    int newPos2 = currPos, newSpeed2 = currSpeed > 0 ? -1 : 1;
+                    queue.add(new CarCondition(newPos2, newSpeed2));
                 }
             }
             // update the shortest length
