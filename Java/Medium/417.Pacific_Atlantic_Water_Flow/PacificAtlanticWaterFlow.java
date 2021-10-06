@@ -47,20 +47,12 @@ public class PacificAtlanticWaterFlow {
         // need two 2-D arrays
         boolean[][] isConnectedToPacific = new boolean[rows][cols], isConnectedToAtlantic = new boolean[rows][cols];
 
-        // first, flow water from both ends of the columns into the grid
         for (int i = 0; i < rows; i++) {
-            // flow from the leftmost column - link cells which connect to Pacific
-            flowBack(heights, i, 0, isConnectedToPacific);
-            // flow from the rightmost column - link cells which connect to Atlantic
-            flowBack(heights, i, cols - 1, isConnectedToAtlantic);
-        }
-
-        // similarly, flow water from both ends of the rows
-        for (int i = 0; i < cols; i++) {
-            // flow from the topmost row - link cells which connect to Pacific
-            flowBack(heights, 0, i, isConnectedToPacific);
-            // flow from the bottom-most column - link cells which connect to Atlantic
-            flowBack(heights, rows - 1, i, isConnectedToAtlantic);
+            for (int j = 0; j < cols; j++) {
+                // flow water from the boundary cell into the grid
+                if ((i == 0) || (j == 0)) flowBack(heights, i, j, isConnectedToPacific);
+                if ((i == rows - 1) || (j == cols - 1)) flowBack(heights, i, j, isConnectedToAtlantic);
+            }
         }
 
         List<List<Integer>> res = new ArrayList<>();
@@ -76,6 +68,8 @@ public class PacificAtlanticWaterFlow {
     }
 
     private void flowBack(int[][] heights, int row, int col, boolean[][] isConnected) {
+        // if the cell is visited - stop traversing
+        if (isConnected[row][col]) return;
         // mark the current cell as connected
         isConnected[row][col] = true;
         // search 4 neighbors
@@ -84,8 +78,6 @@ public class PacificAtlanticWaterFlow {
             // handle edge cases
             // don't proceed if out of the grid
             if (nextRow < 0 || nextCol < 0 || nextRow >= heights.length || nextCol >= heights[0].length) continue;
-            // also don't need to revisit connected cells
-            if (isConnected[nextRow][nextCol]) continue;
             // when flow back, we need to find a higher (or equal) height, stop searching if the adjacent height is smaller
             if (heights[nextRow][nextCol] < heights[row][col]) continue;
             // otherwise, keep searching and connecting neighbor cells
