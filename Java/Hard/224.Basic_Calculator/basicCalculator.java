@@ -1,19 +1,21 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.Stack;
+
+import static org.junit.Assert.assertEquals;
 
 public class basicCalculator {
 
     /**
      * Implement a basic calculator to evaluate a simple expression string.
-     *
+     * <p>
      * The expression string may contain open ( and closing parentheses ), the plus + or minus sign -, non-negative integers
      * and empty spaces
-     *
+     * <p>
      * Note:
      * You may assume that the given expression is always valid.
      * Do not use the eval built-in library function.
-     *
+     * <p>
      * Approach 1: Stack
      * 本质上，此题可以将结果分段计算，然后在遇到新的block（即左括号时），将当前结果和该block前的符号记在stack中，然后更新符号和分段结果，继续向前遍历。
      * 同时，把减法看成是将其后的数字变为相反数，那么整个表达式一直其实是一直在计算加法。因为表达式中只有加减法，可以直接用一个整数sign表示，1表示当前为+，
@@ -27,10 +29,10 @@ public class basicCalculator {
      * 的值，然后7 - 这个值。所以当遇到左括号时，需要把之前的计算结果和符号sign一起压栈，然后彻底更新result和sign，因为要重新开始计算新的block值
      * 5.若字符为')'，此时需要将之前的结果结算。首先要将block内结果计算完毕，与之前相同，result要加上sign * num，同时将现在的result的结果与栈顶元素
      * 相乘，即得到之前记录的符号，然后再将此结果与先前的结果相加。即得到整个block内的结果。
-     *
+     * <p>
      * 需要注意的是，输入表达式不一定会以')'结尾，所以很有可能最后的数字没有结算完毕。因此最后需要返回计算下来的result + (sign * num)，若最后一位是')'，
      * 则最后的num是0，不影响最终结果
-     *
+     * <p>
      * Time: O(n) 只需遍历一遍字符串
      * Space: O(n) 最坏情况下，需要将结果与符号一直压栈 e.g. (1+(2+(3+(4+(5+...)))，此时需要O(n)空间
      */
@@ -41,17 +43,17 @@ public class basicCalculator {
         //可以认为在表达式前加上0 +，不影响最后结果
         int num = 0;
         int sign = 1;
-        for(int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
+        for (int i = 0; i < s.length(); i++) {
+            char curr = s.charAt(i);
             //若当前字符为数字，则要将数字所有位数记录下来
-            if(Character.isDigit(c)) {
-                num = num * 10 + c - '0';
-            } else if(c == '+' || c == '-') {
+            if (Character.isDigit(curr)) {
+                num = num * 10 + curr - '0';
+            } else if (curr == '+' || curr == '-') {
                 //当字符为运算符时，需要结算之前结果，然后更新当前运算符以及归零数字即可
                 res += sign * num;
                 num = 0;
-                sign = c == '+' ? 1 : -1;
-            } else if(c == '(') {
+                sign = curr == '+' ? 1 : -1;
+            } else if (curr == '(') {
                 //当字符为左括号时，需要计算新的block值，
                 //则要把之前的结果与符号压栈，以便后续计算
                 //同时初始化符合与block结果(res)，就像一切从头开始
@@ -61,7 +63,7 @@ public class basicCalculator {
 
                 res = 0;
                 sign = 1;
-            } else if(c == ')') {
+            } else if (curr == ')') {
                 //若当前结果为右括号，右括号前字符只可能是空格或数字
                 //因此需要先结算之前结果
                 res += sign * num;
