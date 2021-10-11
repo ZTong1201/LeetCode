@@ -25,8 +25,9 @@ public class ArrayShuffleSwap {
      * shuffle(): O(n) since now we don't need to remove from the list and the shuffle will be done by one pass
      * Space: O(n)
      */
-    private int[] original, shuffled;
-    private Random random;
+    private final int[] original;
+    private final Random random;
+    private int[] shuffled;
 
     public ArrayShuffleSwap(int[] nums) {
         original = nums.clone();
@@ -35,8 +36,7 @@ public class ArrayShuffleSwap {
     }
 
     public int[] reset() {
-        shuffled = original;
-        original = original.clone();
+        shuffled = original.clone();
         return shuffled;
     }
 
