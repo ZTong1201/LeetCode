@@ -46,7 +46,7 @@ public class WordFilterSuffixWrappedWords {
     }
 
     private static class TrieNode {
-        private TrieNode[] children;
+        private final TrieNode[] children;
         private int index;
 
         public TrieNode() {

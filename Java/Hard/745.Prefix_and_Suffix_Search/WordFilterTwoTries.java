@@ -40,12 +40,12 @@ public class WordFilterTwoTries {
         suffixTrie = new TrieNode();
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
-            insert(word, word, i, prefixTrie);
-            insert(reverseString(word), word, i, suffixTrie);
+            insert(word, i, prefixTrie);
+            insert(reverseString(word), i, suffixTrie);
         }
     }
 
-    private void insert(String s, String word, int index, TrieNode head) {
+    private void insert(String s, int index, TrieNode head) {
         TrieNode ptr = head;
         for (char c : s.toCharArray()) {
             if (!ptr.containsKey(c)) ptr.put(c);
@@ -100,7 +100,7 @@ public class WordFilterTwoTries {
     }
 
     private static class TrieNode {
-        private TrieNode[] children;
+        private final TrieNode[] children;
         private int index;
 
         public TrieNode() {
