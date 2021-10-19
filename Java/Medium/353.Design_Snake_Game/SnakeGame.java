@@ -125,9 +125,9 @@ public class SnakeGame {
         int nextHeadId = nextHeadRow * width + nextHeadCol;
         // if the new head position is already on the snake body
         // this is an invalid move
-        boolean biteItself = snakePositions.contains(nextHeadId);
+        boolean biteSelf = snakePositions.contains(nextHeadId);
         // either move out of the grid or the snake bite itself, the game is over
-        return outWidth || outHeight || biteItself;
+        return outWidth || outHeight || biteSelf;
     }
 
     private void moveSnake(int nextHeadRow, int nextHeadCol) {
@@ -141,8 +141,8 @@ public class SnakeGame {
         } else {
             // otherwise, it's not a food move
             // we need to remove the tail from both the deque and the set
-            int currId = snake.pollLast();
-            snakePositions.remove(currId);
+            int currTailId = snake.pollLast();
+            snakePositions.remove(currTailId);
         }
     }
 }
