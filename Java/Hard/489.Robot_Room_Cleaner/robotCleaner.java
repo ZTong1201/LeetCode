@@ -51,12 +51,12 @@ public class robotCleaner {
     public void cleanRoom(Robot robot) {
         //将当前格子在grid中的坐标以i，j的字符串形式记录下来
         visited = new HashSet<>();
-        dfs(0, 0, 0, robot);
+        cleanRoomRecursive(0, 0, 0, robot);
     }
 
-    private void dfs(int row, int col, int direction, Robot robot) {
+    private void cleanRoomRecursive(int currRow, int currCol, int direction, Robot robot) {
         //将当前坐标记录成字符串
-        String currLoc = row + "," + col;
+        String currLoc = currRow + "," + currCol;
         //若当前位置已被遍历，可将其视为inaccessible的格子，直接返回
         if (visited.contains(currLoc)) return;
         visited.add(currLoc);
@@ -67,35 +67,34 @@ public class robotCleaner {
             //若当前方向可以继续向前走，就沿着该方向做dfs遍历
             if (robot.move()) {
                 //记录下当前位置
-                int x = row, y = col;
+                int nextRow = currRow, nextCol = currCol;
                 //根据当前robot的方向，得到robot移动到下一个格子的坐标
                 switch (direction) {
                     case 0: { // 0 - up
-                        y += 1;
+                        nextRow--;
                         break;
                     }
                     case 1: { // 1 - right
-                        x += 1;
+                        nextCol++;
                         break;
                     }
                     case 2: { // 2 - down
-                        y -= 1;
+                        nextRow++;
                         break;
                     }
                     case 3: { // 3 - left
-                        x -= 1;
+                        nextCol--;
                         break;
                     }
                 }
                 //得到新坐标后，继续沿着当前方向进行dfs遍历
-                dfs(x, y, direction, robot);
+                cleanRoomRecursive(nextRow, nextCol, direction, robot);
                 //若当前格子的四个方向都已走到死路，需要backtrack回到上一个格子，然后调转到下一个方向，判断是否可以继续遍历
                 goBack(robot);
             }
             //若当前方向无法继续前进，考虑顺时针调转90度，遍历下一个方向
             robot.turnRight();
-            direction += 1;
-            direction %= 4;
+            direction = (direction + 1) % 4;
         }
     }
 
