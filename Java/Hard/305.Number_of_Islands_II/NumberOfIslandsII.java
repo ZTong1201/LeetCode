@@ -46,24 +46,23 @@ public class NumberOfIslandsII {
         int[][] next = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
         for (int[] position : positions) {
-            int row = position[0], col = position[1];
-            int id = row * n + col;
+            int currId = position[0] * n + position[1];
             // if it's a duplicate node - no need for extra computation
-            if (uf.isValidNode(id)) {
+            if (uf.isLand(currId)) {
                 res.add(uf.getNumOfConnectedComponents());
                 continue;
             }
 
             // otherwise, add the node into the union find (set parent as itself)
-            uf.setParent(id);
+            uf.turnToLand(currId);
 
             // check 4 neighbors and see whether we can connect with any nodes
             for (int[] step : next) {
-                int nextRow = row + step[0], nextCol = col + step[1];
-                int nextId = nextRow * n + nextCol;
+                int neighborRow = position[0] + step[0], neighborCol = position[1] + step[1];
+                int neighborId = neighborRow * n + neighborCol;
                 // need to make sure the search is still in the grid + the neighbor is actually a land cell
-                if (nextRow >= 0 && nextCol >= 0 && nextRow < m && nextCol < n && uf.isValidNode(nextId)) {
-                    uf.union(id, nextId);
+                if (neighborRow >= 0 && neighborCol >= 0 && neighborRow < m && neighborCol < n && uf.isLand(neighborId)) {
+                    uf.union(currId, neighborId);
                 }
             }
             // after union with the neighbors - get the number of updated connected components
@@ -94,11 +93,11 @@ public class NumberOfIslandsII {
             return i;
         }
 
-        public boolean isValidNode(int i) {
+        public boolean isLand(int i) {
             return this.parent[i] != -1;
         }
 
-        public void setParent(int i) {
+        public void turnToLand(int i) {
             // assign the parent node as itself first
             parent[i] = i;
             // increment the number of connected component (pretend the new node is a standalone node)
