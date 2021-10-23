@@ -32,15 +32,14 @@ public class TrapRainWaterII {
     public int trapRainWater(int[][] heightMap) {
         int rows = heightMap.length, cols = heightMap[0].length;
         // use a heap to keep track of the smallest boundary heights
-        PriorityQueue<Cell> minHeap = new PriorityQueue<>((a, b) -> (Integer.compare(a.height, b.height)));
+        PriorityQueue<Cell> minHeap = new PriorityQueue<>((a, b) -> (Integer.compare(a.maxHeight, b.maxHeight)));
         boolean[][] visited = new boolean[rows][cols];
+
         // add the boundary cells into the heap first
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) {
                     minHeap.add(new Cell(i, j, heightMap[i][j]));
-                    // mark as visited to avoid duplicate visit
-                    visited[i][j] = true;
                 }
             }
         }
@@ -51,18 +50,24 @@ public class TrapRainWaterII {
         // traverse the grid from the boundary to the inner cells
         while (!minHeap.isEmpty()) {
             Cell curr = minHeap.poll();
-            // check 4 neighbors
-            for (int[] step : next) {
-                int nextRow = curr.row + step[0], nextCol = curr.col + step[1];
-                // still need to be inside the grid and unvisited
-                if (nextRow >= 0 && nextCol >= 0 && nextRow < rows && nextCol < cols && !visited[nextRow][nextCol]) {
-                    // mark as visited
-                    visited[nextRow][nextCol] = true;
-                    // check whether we can trap some rain water here
-                    // we can when the boundary height is greater than the current height
-                    totalRain += Math.max(0, curr.height - heightMap[nextRow][nextCol]);
-                    // the height will always keep track of the maximum boundary height
-                    minHeap.add(new Cell(nextRow, nextCol, Math.max(curr.height, heightMap[nextRow][nextCol])));
+            int currRow = curr.row, currCol = curr.col;
+
+            if (!visited[currRow][currCol]) {
+                // mark the cell as visited to avoid duplicate visit
+                visited[currRow][currCol] = true;
+
+                // check whether we can trap some rain water here
+                // we can trap when the boundary height is greater than the current height
+                totalRain += Math.max(0, curr.maxHeight - heightMap[currRow][currCol]);
+
+                // check 4 neighbors
+                for (int[] step : next) {
+                    int nextRow = currRow + step[0], nextCol = currCol + step[1];
+                    // still need to be inside the grid and unvisited
+                    if (nextRow >= 0 && nextCol >= 0 && nextRow < rows && nextCol < cols && !visited[nextRow][nextCol]) {
+                        // the height will always keep track of the maximum boundary height
+                        minHeap.add(new Cell(nextRow, nextCol, Math.max(curr.maxHeight, heightMap[nextRow][nextCol])));
+                    }
                 }
             }
         }
@@ -72,12 +77,12 @@ public class TrapRainWaterII {
     private static class Cell {
         int row;
         int col;
-        int height;
+        int maxHeight;
 
-        public Cell(int row, int col, int height) {
+        public Cell(int row, int col, int maxHeight) {
             this.row = row;
             this.col = col;
-            this.height = height;
+            this.maxHeight = maxHeight;
         }
     }
 
