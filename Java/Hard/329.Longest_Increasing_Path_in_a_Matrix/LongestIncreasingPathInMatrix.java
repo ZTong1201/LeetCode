@@ -30,39 +30,43 @@ public class LongestIncreasingPathInMatrix {
      * Time: O(mn) each cell will be visited once for calculation
      * Space: O(mn) need a 2D array for memorization
      */
-    private int[][] memo;
+    private int[][] longestPathLength;
 
     public int longestIncreasingPathDFS(int[][] matrix) {
         int m = matrix.length, n = matrix[0].length;
-        memo = new int[m][n];
-        int res = 0;
+        longestPathLength = new int[m][n];
+        int maxLength = 0;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 // compute the longest path at each cell via dfs
                 // since the cell value is guaranteed to be >= 0
                 // we use -1 as the prev value such that dfs can proceed
-                res = Math.max(res, dfs(matrix, i, j, -1));
+                maxLength = Math.max(maxLength, searchLongestIncreasingPath(matrix, i, j, -1));
             }
         }
-        return res;
+        return maxLength;
     }
 
-    private int dfs(int[][] matrix, int i, int j, int prev) {
+    private int searchLongestIncreasingPath(int[][] matrix, int i, int j, int prev) {
         // base case - if we jump outside the grid or hitting a non-increasing cell, stop
         if (i < 0 || j < 0 || i >= matrix.length || j >= matrix[0].length || matrix[i][j] <= prev) {
             return 0;
         }
+        
         // or if we revisit a cell - return the memorized value
-        if (memo[i][j] != 0) return memo[i][j];
+        if (longestPathLength[i][j] != 0) return longestPathLength[i][j];
         // otherwise, it's a brand-new cell, calculate the longest path via dfs
         // need to search 4 directions and find the maximum
         int curr = matrix[i][j];
+        int up = searchLongestIncreasingPath(matrix, i - 1, j, curr);
+        int bottom = searchLongestIncreasingPath(matrix, i + 1, j, curr);
+        int left = searchLongestIncreasingPath(matrix, i, j - 1, curr);
+        int right = searchLongestIncreasingPath(matrix, i, j + 1, curr);
+
         // need to increment by 1 since the current value will always be part of that path
-        memo[i][j] = Math.max(dfs(matrix, i + 1, j, curr), Math.max(
-                Math.max(dfs(matrix, i - 1, j, curr), dfs(matrix, i, j + 1, curr)),
-                dfs(matrix, i, j - 1, curr))) + 1;
-        return memo[i][j];
+        longestPathLength[i][j] = 1 + Math.max(up, Math.max(bottom, Math.max(left, right)));
+        return longestPathLength[i][j];
     }
 
     /**
