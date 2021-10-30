@@ -77,13 +77,14 @@ public class subarraySum {
      * Space: O(n), we need a hash map to map from the number occurrences and the sum we seen
      */
     public int subarraySumHashMap(int[] nums, int k) {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(0, 1);
+        Map<Integer, Integer> prefixSum = new HashMap<>();
+        prefixSum.put(0, 1);
         int count = 0, sum = 0;
         for (int num : nums) {
             sum += num;
-            if (map.containsKey(sum - k)) count += map.get(sum - k);
-            map.put(sum, map.getOrDefault(sum, 0) + 1);
+            
+            count += prefixSum.getOrDefault((sum - k), 0);
+            prefixSum.put(sum, prefixSum.getOrDefault(sum, 0) + 1);
         }
         return count;
     }
