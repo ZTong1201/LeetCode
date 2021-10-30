@@ -1,5 +1,7 @@
 import org.junit.Test;
 
+import java.util.Stack;
+
 import static org.junit.Assert.assertEquals;
 
 public class evaluateRPN {
@@ -7,16 +9,52 @@ public class evaluateRPN {
     /**
      * Evaluate the value of an arithmetic expression in Reverse Polish Notation.
      * <p>
-     * Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+     * Valid operators are +, -, *, and /. Each operand may be an integer or another expression.
      * <p>
-     * Note:
+     * Note that division between two integers should truncate toward zero.
      * <p>
-     * Division between two integers should truncate toward zero.
-     * The given RPN expression is always valid. That means the expression would always evaluate to a result and there won't be any
-     * divide by zero operation.
+     * It is guaranteed that the given RPN expression is always valid. That means the expression would always evaluate to
+     * a result, and there will not be any division by zero operation.
+     * <p>
+     * Constraints:
+     * <p>
+     * 1 <= tokens.length <= 10^4
+     * tokens[i] is either an operator: "+", "-", "*", or "/", or an integer in the range [-200, 200].
+     * <p>
+     * Approach: Stack
+     * <p>
+     * Time: O(n)
+     * Space: O(n)
      */
     public int evalRPN(String[] tokens) {
-        return 0;
+        Stack<Integer> stack = new Stack<>();
+
+        for (String token : tokens) {
+            switch (token) {
+                case "+": {
+                    stack.push(stack.pop() + stack.pop());
+                    break;
+                }
+                case "-": {
+                    int num1 = stack.pop(), num2 = stack.pop();
+                    stack.push(num2 - num1);
+                    break;
+                }
+                case "*": {
+                    stack.push(stack.pop() * stack.pop());
+                    break;
+                }
+                case "/": {
+                    int num1 = stack.pop(), num2 = stack.pop();
+                    stack.push(num2 / num1);
+                    break;
+                }
+                default: {
+                    stack.push(Integer.parseInt(token));
+                }
+            }
+        }
+        return stack.pop();
     }
 
     @Test
