@@ -27,31 +27,28 @@ public class mergeIntervals {
      * it back to 2-d array
      */
     public int[][] mergeSorting(int[][] intervals) {
-        //the reason use a linked list is to get the last element in the list in O(1) time
-        LinkedList<int[]> res = new LinkedList<>();
-        Arrays.sort(intervals, (int[] a, int[] b) -> {
-            if (a[0] == b[0]) return a[1] - b[1];
-            else return a[0] - b[0];
-        });
-        for (int[] interval : intervals) {
-            //if it is the first interval or the top interval has no overlaps with the current interval we care, add it to the list
-            if (res.isEmpty() || interval[0] > res.getLast()[1]) {
-                res.add(interval);
-            } else {
-                //otherwise, they overlap, update the ending time with the maximum
-                res.getLast()[1] = Math.max(res.getLast()[1], interval[1]);
-            }
-        }
-        return listToArray(res);
-    }
+        // sort the intervals by the start time
+        Arrays.sort(intervals, (a, b) -> (Integer.compare(a[0], b[0])));
+        List<int[]> res = new ArrayList<>();
+        int index = 0;
 
-    private int[][] listToArray(LinkedList<int[]> res) {
-        int length = res.size();
-        int[][] arr = new int[length][2];
-        for (int i = 0; i < length; i++) {
-            arr[i] = res.removeFirst();
+        while (index < intervals.length) {
+            // get the start and end time of current interval
+            int start = intervals[index][0], end = intervals[index][1];
+
+            // search ahead to see whether we can merge with any intervals
+            // the only thing needs to be changed is the end time
+            while (index + 1 < intervals.length && end >= intervals[index + 1][0]) {
+                end = Math.max(end, intervals[index + 1][1]);
+                index++;
+            }
+
+            // all overlapping intervals have been merged, add it to the result list
+            res.add(new int[]{start, end});
+            // move to the next interval (if any)
+            index++;
         }
-        return arr;
+        return res.toArray(new int[res.size()][2]);
     }
 
     @Test
@@ -110,7 +107,7 @@ public class mergeIntervals {
                 res.getLast()[1] = Math.max(res.getLast()[1], interval[1]);
             }
         }
-        return listToArray(res);
+        return res.toArray(new int[res.size()][2]);
     }
 
     @Test
@@ -258,17 +255,7 @@ public class mergeIntervals {
         for (int comp = 0; comp < nodesInComp.size(); comp++) {
             res.add(mergeNodes(nodesInComp.get(comp)));
         }
-        return listToArray(res);
-    }
-
-
-    private int[][] listToArray(List<int[]> res) {
-        int length = res.size();
-        int[][] arr = new int[length][2];
-        for (int i = 0; i < length; i++) {
-            arr[i] = res.get(i);
-        }
-        return arr;
+        return res.toArray(new int[res.size()][2]);
     }
 
 
